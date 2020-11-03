@@ -3,6 +3,7 @@ import Apiservice from '../../js/class/services'
 import List from 'list.js'
 import history from '../../history.json'
 import Swiper, { Navigation, Pagination, Autoplay } from 'swiper'
+import AlertModal from '../../js/class/alertmodal'
 
 // configure Swiper to use modules
 Swiper.use([Navigation, Pagination, Autoplay])
@@ -34,9 +35,9 @@ export default class runDashboardPage extends DashboardElementClass {
   }
 
   this._setupPageHeader()
+  this._setupSelectedSkillsSection()
   this._setupHistoryTable()
   this._setUserHistoryTable()
-  this._setupSelectedSkillsSection()
  }
 
  _setupHistoryTable() {
@@ -159,9 +160,29 @@ export default class runDashboardPage extends DashboardElementClass {
 
    const a = new this.confirmModal({})
    a.trueButton.addEventListener('click', (e) => {
-    window.location.href = './testing'
+    this._askToDoTesting()
    })
   })
+ }
+
+ _askToDoTesting() {
+  new Apiservice()
+   ._requestTotest()
+   .then((resp) => {
+    if (resp.status === 200) {
+     this._showAlertErrorModal('test')
+     return false
+    }
+    return resp.json()
+   })
+   .then((data) => {
+    //  If send this to ask to test if find id record just resp as a result then just redirect to result page
+    window.location.href = `./testing?id=${data.id}`
+    this._showAlertSuccessModal()
+   })
+   .catch((err) => {
+    this._showAlertErrorModal(err)
+   })
  }
 
  _getTableElement() {
@@ -174,6 +195,20 @@ export default class runDashboardPage extends DashboardElementClass {
    .then((resp) => {
     return resp.json()
    })
+ }
+
+ _showAlertErrorModal(err) {
+  new AlertModal({
+   alertMsg: err,
+   type: 'error',
+  })
+ }
+
+ _showAlertSuccessModal(text) {
+  new AlertModal({
+   alertMsg: text,
+   type: 'success',
+  })
  }
 
  _requestToUserHistory() {
