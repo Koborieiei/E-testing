@@ -13,7 +13,7 @@ export default class runDashboardPage extends DashboardElementClass {
   super()
   this.userData = history
   this.userSelectedSkills = undefined
-  this.userTableList = undefined
+  this.skillUrl = undefined
   this.SwiperContainer = undefined
   this.tableUserHistory = undefined
 
@@ -139,50 +139,32 @@ export default class runDashboardPage extends DashboardElementClass {
  }
 
  _appendSelectedSkillItems(selectedSkillsParent) {
-  for (let i = 0; i < this.userData.items.length; i++) {
+  this.userData.items.map((item) => {
    const skillcard = new this.Skillcard({
-    relatedskill: this.userData.items[i].skills,
-    titlename: this.userData.items[i].testname,
-    term: `${this.userData.items[i].choicenumber} ข้อ ${
-     this.userData.items[i].time == null
-      ? '/ ไม่กำหนดเวลา'
-      : this.userData.items[i].time
+    relatedskill: item.skills,
+    titlename: item.testname,
+    term: `${item.choicenumber} ข้อ ${
+     item.time == null ? '/ ไม่กำหนดเวลา' : item.time
     }`,
     parents: selectedSkillsParent,
    })
    this._setupEventSelectedSkillButton(skillcard.button)
-  }
+  })
  }
 
  _setupEventSelectedSkillButton(button) {
-  return button.addEventListener('click', (e) => {
-   e.preventDefault()
-
-   const a = new this.confirmModal({})
-   a.trueButton.addEventListener('click', (e) => {
-    this._askToDoTesting()
+  button.addEventListener('click', (e) => {
+   console.log(e.target.value)
+   new this.confirmModal({
+    headerText: 'ยืนยัน',
+    skillQueryString: e.target.value,
    })
   })
  }
 
  _askToDoTesting() {
-  new Apiservice()
-   ._requestTotest()
-   .then((resp) => {
-    if (resp.status === 200) {
-     this._showAlertErrorModal('test')
-     return false
-    }
-    return resp.json()
-   })
-   .then((data) => {
-    //  If send this to ask to test if find id record just resp as a result then just redirect to result page
-    window.location.href = `./testing?id=${data.id}`
-    this._showAlertSuccessModal()
-   })
-   .catch((err) => {
-    this._showAlertErrorModal(err)
-   })
+  //  If send this to ask to test if find id record just resp as a result then just redirect to result page
+  window.location.href = `./testing?skill=null`
  }
 
  _getTableElement() {
