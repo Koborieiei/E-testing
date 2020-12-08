@@ -1,7 +1,6 @@
-// import AlertModal from '../../../js/class/alertmodal'
 import ShowProgressBar from '../../../js/class/progressbar.class'
+import Timer from '../../../js/class/Timer.Class'
 import HtmlElementClass from '../../../js/class/htmlelementclass'
-// import Apiservice from '../../../js/class/services'
 
 export default class runResultPage extends HtmlElementClass {
  constructor() {
@@ -19,31 +18,21 @@ export default class runResultPage extends HtmlElementClass {
 
  _render() {
   try {
-   //  this._sendResultRequest()
-   //    console.log('test')
-
+   //    this._changeEtestingLinkToDefault()
    this._storeTestingResult()
 
-   //  this.testingResult
-   console.log(
-    localStorage.getItem('progressbarvalue'),
-    localStorage.getItem('totalquestionnumber')
-   )
-   // .then(() => {
    this._setPageHeader()
    this._setupProgressbar()
 
    this.progressBar._setInitiatedProgressBarValue()
-   //    console.log(document.querySelector('#progressBar'))
 
    this._setPageBody()
    this._setPageDisplaySkills()
-   // })
-   // .then(() => {
+
    this._setPageButtonContainer()
    //    this._clearAllLocalStorage()
-   // })
   } catch (error) {
+   console.log(error)
    this._appAppendChild(this._generateDisplayErrorHandle())
   }
  }
@@ -60,7 +49,7 @@ export default class runResultPage extends HtmlElementClass {
   this.progressBar = new ShowProgressBar({
    progressbarparent: '#progressBar',
    //    not sure whether may count total of question or answers??
-   actualValue: this._getTestingTotalQuestion(),
+   actualValue: this._getTestingTotalAnswered(),
    maximumValue: this._getTotalOfQuestionNumber(),
   })
   this.progressBar.currentValueOfProgressBar = this._getCurrentProgressbar()
@@ -81,28 +70,30 @@ export default class runResultPage extends HtmlElementClass {
  _getTotalAnswerElement() {
   return this.questionHeaderNode.querySelector('#counterNumber')
  }
+
  _setTimerText() {
-  var minutes = parseInt((this._getTimeLeft() / 60) % 60, 10),
-   hour = parseInt((this._getTimeLeft() / 3600) % 24, 10),
-   seconds = parseInt(this._getTimeLeft() % 60, 10)
-  hour = hour < 10 ? '0' + hour : hour
-  minutes = minutes < 10 ? '0' + minutes : minutes
-  seconds = seconds < 10 ? '0' + seconds : seconds
-  this._getTimerElement().textContent = `${hour}:${minutes}:${seconds}`
+  const timeLeftDuration = new Timer({
+   duration: this._getTimeLeft(),
+  })
+
+  timeLeftDuration._getMinutesIncludeZero()
+  this._getTimerElement().textContent = `${timeLeftDuration._getHourIncludeZero()}:${timeLeftDuration._getMinutesIncludeZero()}:${timeLeftDuration._getSecondIncludeZero()}`
  }
 
  _setTotalAnswerText() {
   //   Waiting to change
-  this._getTotalAnswerElement().textContent = `${this._getTestingTotalQuestion()}/${this._getTotalOfQuestionNumber()}`
+  this._getTotalAnswerElement().textContent = `${this._getTestingTotalAnswered()}/${this._getTotalOfQuestionNumber()}`
  }
 
  _setPageBody() {
-  var minutes = parseInt((this._getTimeConsuming() / 60) % 60, 10),
-   hour = parseInt((this._getTimeConsuming() / 3600) % 24, 10)
+  const newTimer = new Timer({
+   duration: this._getTimeConsuming(),
+  })
+
   const resultPageBody = this._generateResultBody()
   resultPageBody.querySelector(
    '#timeSpending'
-  ).textContent = `${hour} ชั่วโมง ${minutes} นาที`
+  ).textContent = `${newTimer._getOnlyMinuteAndSecondString()}`
 
   resultPageBody.querySelector('#displayPoint').textContent =
    `${this._getTestingPoint()} คะแนน` || 'ไม่พบคะแนน'
@@ -111,7 +102,6 @@ export default class runResultPage extends HtmlElementClass {
  }
 
  _getTimeLeft() {
-  console.log(localStorage.getItem('timeleft'))
   return localStorage.getItem('timeleft')
  }
 
@@ -124,11 +114,11 @@ export default class runResultPage extends HtmlElementClass {
  }
 
  _setSkillBadgeParents(skillbadgeparent) {
-  //   this.testedSkills.map((skill) => {
-  //    const skillBadge = this._generateNewSkillBadge()
-  //    skillBadge.textContent = skill.skillname
-  //    skillbadgeparent.appendChild(skillBadge)
-  //   })
+  this._getTestingSkill().map((skill) => {
+   const skillBadge = this._generateNewSkillBadge()
+   skillBadge.textContent = `Skillid ${skill.skill_id} `
+   skillbadgeparent.appendChild(skillBadge)
+  })
  }
 
  _setPageButtonContainer() {
@@ -141,7 +131,7 @@ export default class runResultPage extends HtmlElementClass {
  _storeTestingResult() {
   const queryString = window.location.search.split('?')[1]
   this.testingResult = JSON.parse(decodeURIComponent(queryString))
-  console.log(this.testingResult)
+  console.log(JSON.parse(decodeURIComponent(queryString)))
  }
 
  _setupRetestButton() {
@@ -174,12 +164,16 @@ export default class runResultPage extends HtmlElementClass {
   return this.testingResult.result.point
  }
 
- _getTestingTotalQuestion() {
+ _getTestingTotalAnswered() {
   return this.testingResult.result.total
  }
 
  _getTimeConsuming() {
   return this.testingResult.result.timeused
+ }
+
+ _getTestingSkill() {
+  return this.testingResult.skill
  }
 
  _throwNewError() {
