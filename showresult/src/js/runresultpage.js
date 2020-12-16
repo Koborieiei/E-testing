@@ -1,6 +1,6 @@
-import AlertModal from '../../../js/class/alertmodal'
+import ShowProgressBar from '../../../js/class/progressbar.class'
+import Timer from '../../../js/class/Timer.Class'
 import HtmlElementClass from '../../../js/class/htmlelementclass'
-import Apiservice from '../../../js/class/services'
 
 export default class runResultPage extends HtmlElementClass {
  constructor() {
@@ -9,55 +9,99 @@ export default class runResultPage extends HtmlElementClass {
   this.timeConsuming = undefined
   this.testingPoint = undefined
   this.testedSkills = undefined
+  this.questionHeaderNode = undefined
 
   this._render()
  }
 
+ // numberofanswer with total questions
+
  _render() {
   try {
-   this._sendResultRequest()
+   //    this._changeEtestingLinkToDefault()
    this._storeTestingResult()
-   this.testingResult
+   this._setPageHeader()
+   this._setupProgressbar()
 
-    .then(() => {
-     this._setPageHeader()
-     this._setPageBody()
-     this._setPageDisplaySkills()
-    })
-    .then(() => {
-     this._setPageButtonContainer()
-    })
+   this.progressBar._setInitiatedProgressBarValue()
+
+   this._setPageBody()
+   this._setPageDisplaySkills()
+
+   this._setPageButtonContainer()
+   //    this._clearAllLocalStorage()
   } catch (error) {
    console.log(error)
+   this._appAppendChild(this._generateDisplayErrorHandle())
   }
  }
 
  _setPageHeader() {
-  const questionHeaderNode = this._generateQuestionHeader()
-  this._setTimerText(questionHeaderNode.querySelector('#timer'))
-  this._setTotalAnswerText(questionHeaderNode.querySelector('#counterNumber'))
+  this.questionHeaderNode = this._generateQuestionHeader()
+  this._setTimerText()
+  this._setTotalAnswerText()
 
-  return this._appAppendChild(questionHeaderNode)
+  return this._appAppendChild(this.questionHeaderNode)
  }
 
- _setTimerText(timerNodeElement) {
-  timerNodeElement.textContent = '--:--'
+ _setupProgressbar() {
+  this.progressBar = new ShowProgressBar({
+   progressbarparent: '#progressBar',
+   //    not sure whether may count total of question or answers??
+   actualValue: this._getTestingTotalAnswered(),
+   maximumValue: this._getTotalOfQuestionNumber(),
+  })
+  this.progressBar.currentValueOfProgressBar = this._getCurrentProgressbar()
  }
 
- _setTotalAnswerText(totalanswernode) {
+ _getCurrentProgressbar() {
+  return parseInt(localStorage.getItem('progressbarvalue'))
+ }
+
+ _getTotalOfQuestionNumber() {
+  return parseInt(localStorage.getItem('totalquestionnumber'))
+ }
+
+ _getTimerElement() {
+  return this.questionHeaderNode.querySelector('#timer')
+ }
+
+ _getTotalAnswerElement() {
+  return this.questionHeaderNode.querySelector('#counterNumber')
+ }
+
+ _setTimerText() {
+  const timeLeftDuration = new Timer({
+   duration: this._getTimeLeft(),
+  })
+
+  timeLeftDuration._getMinutesIncludeZero()
+  this._getTimerElement().textContent = `${timeLeftDuration._getHourIncludeZero()}:${timeLeftDuration._getMinutesIncludeZero()}:${timeLeftDuration._getSecondIncludeZero()}`
+ }
+
+ _setTotalAnswerText() {
   //   Waiting to change
-  totalanswernode.textContent = '100/100'
+  this._getTotalAnswerElement().textContent = `${this._getTestingTotalAnswered()}/${this._getTotalOfQuestionNumber()}`
  }
 
  _setPageBody() {
+  const newTimer = new Timer({
+   duration: this._getTimeConsuming(),
+  })
+
   const resultPageBody = this._generateResultBody()
   resultPageBody.querySelector(
    '#timeSpending'
-  ).textContent = this._getTimeConsuming()
+  ).textContent = `${newTimer._getOnlyMinuteAndSecondString()}`
+
   resultPageBody.querySelector('#displayPoint').textContent =
-   this._getTestingPoint() || 'ไม่พบคะแนน'
+   `${this._getTestingPoint()} คะแนน` || 'ไม่พบคะแนน'
 
   return this._appAppendChild(resultPageBody)
+ }
+
+ _getTimeLeft() {
+  return localStorage.getItem('timeleft')
  }
 
  _setPageDisplaySkills() {
@@ -69,11 +113,32 @@ export default class runResultPage extends HtmlElementClass {
  }
 
  _setSkillBadgeParents(skillbadgeparent) {
-  this.testedSkills.map((skill) => {
-   const skillBadge = this._generateNewSkillBadge()
-   skillBadge.textContent = skill.skillname
-   skillbadgeparent.appendChild(skillBadge)
-  })
+  const testingSkillSet = this._getTestingSkill()
+  const localStorageSkillSets = this._getSkillSetsByLocalStorage()
+
+  for (const key in testingSkillSet) {
+   if (testingSkillSet[key] != undefined) {
+    const skillName = localStorageSkillSets[key].skillname
+    const skillPercent = testingSkillSet[key].percent.toFixed(0)
+    skillbadgeparent.appendChild(
+     this._generateNewSkillBadge(skillName, skillPercent)
+    )
+   }
+  }
+ }
+
+ _generateNewSkillBadge(skillName, skillPercent) {
+  const skillBadge = this._generateNewSkillBadgeElement()
+  skillBadge.children[0].textContent = `${skillName}`
+  skillBadge.children[1].textContent = `${skillPercent} %`
+  return skillBadge
+ }
+
+ _getSkillSetsByLocalStorage() {
+  const skillSets = JSON.parse(
+   decodeURIComponent(localStorage.getItem('skillsets'))
+  )
+  return skillSets
  }
 
  _setPageButtonContainer() {
@@ -83,25 +148,10 @@ export default class runResultPage extends HtmlElementClass {
   return this._appAppendChild(resultButtonContainer)
  }
 
- _sendResultRequest() {
-  this.testingResult = new Apiservice()._sendRequest().then((resp) => {
-   if (resp.status !== 200) {
-    new AlertModal({
-     alertMsg: 'Cannot connect to server, please contact us',
-     type: 'error',
-    })
-    this._throwNewError()
-   }
-
-   return resp.json()
-  })
- }
  _storeTestingResult() {
-  this.testingResult.then((data) => {
-   this.testingPoint = data.result.point
-   this.timeConsuming = `${data.result.hours} ชั่วโมง ${data.result.minutes} นาที`
-   this.testedSkills = data.skills
-  })
+  const queryString = window.location.search.split('?')[1]
+  this.testingResult = JSON.parse(decodeURIComponent(queryString))
+  console.log(JSON.parse(decodeURIComponent(queryString)))
  }
 
  _setupRetestButton() {
@@ -131,31 +181,25 @@ export default class runResultPage extends HtmlElementClass {
  }
 
  _getTestingPoint() {
-  return this.testingPoint
+  return this.testingResult.result.point
+ }
+
+ _getTestingTotalAnswered() {
+  return this.testingResult.result.total
  }
 
  _getTimeConsuming() {
-  return this.timeConsuming
+  return this.testingResult.result.timeused
+ }
+
+ _getTestingSkill() {
+  return this.testingResult.skill
  }
 
  _throwNewError() {
   throw 'ss'
  }
-
- //   _IsRequestSuccess() {
- //     return this._sendRequest()
- //       .then((resp) => {
- //         if (resp.status !== 200) {
- //           new AlertModal({
- //             alertMsg: 'test',
- //             type: 'error',
- //           })
- //           this._throwNewError()
- //         }
- //         return resp.json()
- //       })
- //       .catch((err) => {
- //         console.log(err)
- //       })
- //   }
+ _clearAllLocalStorage() {
+  localStorage.clear()
+ }
 }
