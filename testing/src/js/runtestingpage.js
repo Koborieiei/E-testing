@@ -5,7 +5,6 @@ import Questionselector, * as QuestionselectorController from './class/questions
 import HtmlElementClass from '../../../js/class/htmlelementclass'
 import Timer from '../../../js/class/Timer.Class'
 
-// import progressBar from 'progressbar.js'
 export default class runTestingPageClass extends HtmlElementClass {
  constructor() {
   super()
