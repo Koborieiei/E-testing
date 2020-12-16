@@ -108,8 +108,10 @@ export default class runTestingPageClass extends HtmlElementClass {
   this.availableQuestion.then((data) => {
    this.timeLeft =
     data.testinginfo.timeleft != undefined
-     ? parseInt(data.testinginfo.timeleft) - 140
+     ? parseInt(data.testinginfo.timeleft)
      : data.testinginfo.timeleft
+     
+    //  this.timeleft = 10;
 
    // Waiting to split into chuck function
    let minutes = parseInt((this.timeLeft / 60) % 60, 10)

@@ -101,7 +101,7 @@ export default class runResultPage extends HtmlElementClass {
  }
 
  _getTimeLeft() {
-  return localStorage.getItem('timeleft')
+  return this.testingResult.result.timeleft
  }
 
  _setPageDisplaySkills() {

@@ -24,7 +24,6 @@ export default class Questionselector {
  }
 
  _generateSelector() {
-  // var test = 2
   this.selectorParent = document.createElement('div')
   const firstParent = document.createElement('div')
   firstParent.classList.add('row', 'm-0')
@@ -54,13 +53,13 @@ export default class Questionselector {
 
    this.selector = document.createElement('div')
    this._setupComponentsAttribute(question)
-//    firstParent.appendChild(this.selector)
+   firstParent.appendChild(this.selector)
    this._appendSelectorToParent()
    this.selector.addEventListener('click', (e) => {
     this._setSelectorEvent(e.target)
    })
   })
-  //   this.parent.appendChild(firstParent)
+  this.parent.appendChild(firstParent)
   this.parent.appendChild(this.selectorParent)
   this._appendArrowParentToMainBody()
   this._setArrowEvent()
@@ -92,7 +91,6 @@ export default class Questionselector {
 
  _appendSelectorToParent() {
   //   console.log(this.countNumberOfChilds)
-
   this.selectorParent.appendChild(this.selector)
  }
 
