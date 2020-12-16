@@ -1,5 +1,6 @@
 import DashboardElementClass from '../../js/class/dashboardelement'
 import Apiservice from '../../js/class/services'
+import Timer from '../../js/class/Timer.class'
 import List from 'list.js'
 import history from '../../history.json'
 // import Swiper, { Navigation, Pagination, Autoplay, Thumbs } from 'swiper'
@@ -11,7 +12,7 @@ import AlertModal from '../../js/class/alertmodal'
 export default class runDashboardPage extends DashboardElementClass {
  constructor() {
   super()
-  this.userData = history
+  // this.userData = undefined
   this.userSelectedSkills = undefined
   this.skillUrl = undefined
   this.SwiperContainer = undefined
@@ -24,7 +25,6 @@ export default class runDashboardPage extends DashboardElementClass {
 
   if (this._render() === false) {
    // Create function here
-   console.log('true')
    const newele = document.createElement('div')
    newele.textContent = 'dddd'
    this._appAppendChild(newele)
@@ -37,6 +37,9 @@ export default class runDashboardPage extends DashboardElementClass {
    return false
   }
 
+  this._storeUserSelectedSkills()
+
+  //  console.log(result);
   this._setupPageHeader()
   this._setupSelectedSkillsSection()
   this._setupHistoryTable()
@@ -79,29 +82,44 @@ export default class runDashboardPage extends DashboardElementClass {
   }
  }
  _setUserHistoryTable() {
-  var showpage = 1
-  document.querySelector('#nextTable').addEventListener('click', (e) => {
-   let isLast =
-    this.tableUserHistory.i >
-    this.tableUserHistory.matchingItems.length - this.tableUserHistory.page
-   if (!isLast) {
-    showpage = showpage + 1
-    this.tableUserHistory.show(showpage, 3)
-   }
-  })
+  this.userSelectedSkills
+   .then((data) => {
+    // var showpage = 1
+    console.log(data)
+    const option = {
+     valueNames: this.dataHistoryValue,
+     item: this._userHistoryRow(),
+     pagination: true,
+     page: 3,
+    }
 
-  const option = {
-   valueNames: this.dataHistoryValue,
-   item: this._userHistoryRow(),
-   pagination: true,
-   page: 3,
-  }
+    data.history.map((history) => {
+     const newTimeMinutes = new Timer({
+      duration: history.timeused,
+     })._getTimeStringWithThai()
+     history.timeused = newTimeMinutes
+    })
 
-  const values = this.userData.history
-  this.tableUserHistory = new List('dataTable', option, values)
-  // this.tableUserHistory.show(2,4)
-
-  this._setTableEventListener()
+    const values = data.history
+    this.tableUserHistory = new List('dataTable', option, values)
+    // this.tableUserHistory.show(2,4)
+    this._setTableEventListener()
+   })
+   .catch((err) => {})
+  // document.querySelector('#nextTable').addEventListener('click', (e) => {
+  //  let isLast =
+  //   this.tableUserHistory.i >
+  //   this.tableUserHistory.matchingItems.length - this.tableUserHistory.page
+  //  if (!isLast) {
+  //   showpage = showpage + 3
+  //   this.tableUserHistory.show(showpage, 3)
+  //   console.log(showpage)
+  //  }
+  //  if (showpage >= this.tableUserHistory.items.length) {
+  //   showpage = 1
+  //   console.log(showpage)
+  //  }
+  // })
  }
 
  _setUpSkillLoadMore() {}
@@ -163,47 +181,55 @@ export default class runDashboardPage extends DashboardElementClass {
  //  }
 
  _appendHistoryKeyToDataHistoryValue() {
-  if (this.userData !== undefined) {
-   for (const key in this.userData.history[0]) {
-    this.dataHistoryValue.push(key)
-   }
-  }
+  this.userSelectedSkills
+   .then((data) => {
+    for (const key in data.history[0]) {
+     this.dataHistoryValue.push(key)
+    }
+   })
+   .catch((err) => {})
  }
 
  _appendSelectedSkillItems(selectedSkillsParent) {
+  this.userSelectedSkills
+   .then((result) => {
+    result.items.map((item, index) => {
+     const timer = new Timer({
+      duration: item.time,
+     })
+     //  console.log(timer._getMinutes())
+     const skillcard = new this.Skillcard({
+      relatedskill: item.skills,
+      titlename: item.testname,
+      term: `${item.choicenumber} ข้อ ${
+       item.time == null
+        ? '/ ไม่กำหนดเวลา'
+        : '/ ' + timer._getMinutes() + ' นาที'
+      }`,
+      parents: selectedSkillsParent,
+      img: item.img,
+      testingType: item.testingtype,
+     })
 
-
-  this.userData.items.map((item, index) => {
-   const skillcard = new this.Skillcard({
-    relatedskill: item.skills,
-    titlename: item.testname,
-    term: `${item.choicenumber} ข้อ ${
-     item.time == null ? '/ ไม่กำหนดเวลา' : '/ ' + item.time + 'นาที'
-    }`,
-    parents: selectedSkillsParent,
-    img: item.img,
-    testingType: item.testingtype,
+     this._setupEventSelectedSkillButton(skillcard.button)
+     if (index > this.maxItemofSkillCard - 1) {
+      skillcard.mainContainer.classList.add('hiddenStyle')
+     }
+    })
    })
-
-   //  skillcard.mainContainer.classList.add('hiddenStyle')
-   this._setupEventSelectedSkillButton(skillcard.button)
-   if (index > this.maxItemofSkillCard - 1) {
-    skillcard.mainContainer.classList.add('hiddenStyle')
-   }
-  })
+   .catch((err) => {})
  }
 
  _setupEventSelectedSkillButton(button) {
   button.addEventListener('click', (e) => {
-   console.log(e.target.value)
    const confirmModal = new this.confirmModal({
     headerText: 'ยืนยัน',
-    ModalContent: `การทดสอบมีเงื่อนไขตามที่อธิบายไว้ดังนี้ \n 1. ผู้ใช้ไม่สามารถทดสอบพร้อมกันได้มากกว่า 1 ทักษะ`,
+    ModalContent: `การทดสอบมีเงื่อนไขตามที่อธิบายไว้ดังนี้`,
     skillQueryString: e.target.value,
    })
    confirmModal.trueButton.addEventListener('click', () => {
-    //this need to send the may endpoint
-    //     Need to change the this function to be called out side this file
+    localStorage.setItem('skillsets', e.target.dataset.skillsets)
+    console.log(localStorage.getItem('skillsets'))
     window.location.href = `./testing/?${e.target.value}`
    })
   })
@@ -231,11 +257,7 @@ export default class runDashboardPage extends DashboardElementClass {
  }
 
  _storeUserSelectedSkills() {
-  this.userSelectedSkills = new Apiservice()
-   ._getQuestionObjects()
-   .then((resp) => {
-    return resp.json()
-   })
+  this.userSelectedSkills = new Apiservice()._reqToGetUserSelectedSkills()
  }
 
  _showAlertErrorModal(err) {

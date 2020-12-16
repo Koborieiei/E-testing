@@ -20,7 +20,6 @@ export default class runResultPage extends HtmlElementClass {
   try {
    //    this._changeEtestingLinkToDefault()
    this._storeTestingResult()
-
    this._setPageHeader()
    this._setupProgressbar()
 
@@ -114,11 +113,32 @@ export default class runResultPage extends HtmlElementClass {
  }
 
  _setSkillBadgeParents(skillbadgeparent) {
-  this._getTestingSkill().map((skill) => {
-   const skillBadge = this._generateNewSkillBadge()
-   skillBadge.textContent = `Skillid ${skill.skill_id} `
-   skillbadgeparent.appendChild(skillBadge)
-  })
+  const testingSkillSet = this._getTestingSkill()
+  const localStorageSkillSets = this._getSkillSetsByLocalStorage()
+
+  for (const key in testingSkillSet) {
+   if (testingSkillSet[key] != undefined) {
+    const skillName = localStorageSkillSets[key].skillname
+    const skillPercent = testingSkillSet[key].percent.toFixed(0)
+    skillbadgeparent.appendChild(
+     this._generateNewSkillBadge(skillName, skillPercent)
+    )
+   }
+  }
+ }
+
+ _generateNewSkillBadge(skillName, skillPercent) {
+  const skillBadge = this._generateNewSkillBadgeElement()
+  skillBadge.children[0].textContent = `${skillName}`
+  skillBadge.children[1].textContent = `${skillPercent} %`
+  return skillBadge
+ }
+
+ _getSkillSetsByLocalStorage() {
+  const skillSets = JSON.parse(
+   decodeURIComponent(localStorage.getItem('skillsets'))
+  )
+  return skillSets
  }
 
  _setPageButtonContainer() {

@@ -79,17 +79,20 @@ a.bg-primary:focus, a.bg-primary:hover, button.bg-primary:focus, button.bg-prima
 }
 
 a.page {
-    height: 24px;
-    width: 24px;
+
     display: block;
     border: none;
     line-height: 24px;
-    padding: 0;
+    padding: 8px 16px;
     text-align: center;
-    border-radius: 50%;
     font-weight: 700;
-    color: #3498DB;
-    background-color: #d8e6f0;
+    color: #D1D3E2;
+
+}
+
+.pagination li.active {
+  background-color: #19276B;
+  color: #ffff;
 }
 
 .swiper-container {
