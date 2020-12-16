@@ -23,27 +23,31 @@ export default class runDashboardPage extends DashboardElementClass {
   this.loadMoreButton = undefined
   this.dataHistoryValue = []
 
-  if (this._render() === false) {
-   // Create function here
-   const newele = document.createElement('div')
-   newele.textContent = 'dddd'
-   this._appAppendChild(newele)
-  }
+  this._render()
  }
 
  _render() {
   // return false
-  if (!this._requestToUserHistory()) {
-   return false
+  try {
+   this._storeUserSelectedSkills()
+   //  console.log(result);
+   this._setupPageHeader()
+   this._setupSelectedSkillsSection()
+   this._setupHistoryTable()
+   this._setUserHistoryTable()
+  } catch (error) {
+   console.log(error)
+   //  this._showEmptySkillAlert()
   }
+ }
 
-  this._storeUserSelectedSkills()
-
-  //  console.log(result);
-  this._setupPageHeader()
-  this._setupSelectedSkillsSection()
-  this._setupHistoryTable()
-  this._setUserHistoryTable()
+ _showEmptySkillAlert() {
+  const selectedSkillsParent = document.querySelector('#selectedSkillsParent')
+  // throw '33'
+  selectedSkillsParent.parentNode.insertBefore(
+   this._generateEmptySkillAlert(),
+   selectedSkillsParent
+  )
  }
 
  _setupHistoryTable() {
@@ -65,7 +69,6 @@ export default class runDashboardPage extends DashboardElementClass {
   this._appendSelectedSkillItems(selectedSkillsParent)
   this._appAppendChild(selectedSkillsSection)
   // this._executeSwiperContainer()
-  this._setupLoadMoreButton()
  }
 
  _toggledMoreSkillCard() {
@@ -190,14 +193,22 @@ export default class runDashboardPage extends DashboardElementClass {
    .catch((err) => {})
  }
 
+ _detectErrorMassage(msg) {
+  if (msg == 'no skill! you have to select skill first') {
+   throw 'test'
+  }
+ }
+
  _appendSelectedSkillItems(selectedSkillsParent) {
   this.userSelectedSkills
    .then((result) => {
+    this._detectErrorMassage(result.message)
+
     result.items.map((item, index) => {
      const timer = new Timer({
       duration: item.time,
      })
-     //  console.log(timer._getMinutes())
+
      const skillcard = new this.Skillcard({
       relatedskill: item.skills,
       titlename: item.testname,
@@ -216,8 +227,13 @@ export default class runDashboardPage extends DashboardElementClass {
       skillcard.mainContainer.classList.add('hiddenStyle')
      }
     })
+    this._appendLoadMoreButton()
+    this._setupLoadMoreButton()
    })
-   .catch((err) => {})
+   .catch((err) => {
+    console.log(err)
+    this._showEmptySkillAlert()
+   })
  }
 
  _setupEventSelectedSkillButton(button) {
@@ -252,12 +268,21 @@ export default class runDashboardPage extends DashboardElementClass {
   )
  }
 
+ _appendLoadMoreButton() {
+  const selectedSkillsParent = document.querySelector('#selectedSkillsParent')
+  selectedSkillsParent.parentNode.appendChild(this._generateLoadMoreButton())
+ }
+
  _getTableElement() {
   return document.querySelector('#dataTable')
  }
 
  _storeUserSelectedSkills() {
   this.userSelectedSkills = new Apiservice()._reqToGetUserSelectedSkills()
+  // this.userSelectedSkills = false
+  if (!this.userSelectedSkills) {
+   throw 'Yeah'
+  }
  }
 
  _showAlertErrorModal(err) {

@@ -444,7 +444,7 @@ export default class runTestingPageClass extends HtmlElementClass {
  _getTestingRequestData() {
   const queryString = window.location.search.split('?')[1]
   const testingRequestData = JSON.parse(decodeURIComponent(queryString))
-  console.log(testingRequestData)
+
   return testingRequestData
  }
 
@@ -463,7 +463,6 @@ export default class runTestingPageClass extends HtmlElementClass {
  _setExistedItemToAnswerObject() {
   this.availableQuestion.then((data) => {
    data.results.map((question) => {
-    console.log(question)
     this._pushExistAnswerToAnswerObject(question)
    })
   })
