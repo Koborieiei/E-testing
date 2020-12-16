@@ -1,6 +1,6 @@
 import DashboardElementClass from '../../js/class/dashboardelement'
 import Apiservice from '../../js/class/services'
-import Timer from '../../js/class/Timer.class'
+import Timer from '../../js/class/Timer'
 import List from 'list.js'
 import history from '../../history.json'
 // import Swiper, { Navigation, Pagination, Autoplay, Thumbs } from 'swiper'

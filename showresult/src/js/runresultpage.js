@@ -1,5 +1,5 @@
 import ShowProgressBar from '../../../js/class/progressbar.class'
-import Timer from '../../../js/class/Timer.Class'
+import Timer from '../../../js/class/Timer'
 import HtmlElementClass from '../../../js/class/htmlelementclass'
 
 export default class runResultPage extends HtmlElementClass {

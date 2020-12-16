@@ -3,7 +3,7 @@ import testingItem from '../../../js/class/Testingitem'
 import progressBar from '../../../js/class/progressbar.class'
 import Questionselector, * as QuestionselectorController from './class/questionselector'
 import HtmlElementClass from '../../../js/class/htmlelementclass'
-import Timer from '../../../js/class/Timer.Class'
+import Timer from '../../../js/class/Timer'
 
 export default class runTestingPageClass extends HtmlElementClass {
  constructor() {
