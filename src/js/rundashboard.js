@@ -1,26 +1,30 @@
 import DashboardElementClass from '../../js/class/dashboardelement'
 import Apiservice from '../../js/class/services'
+import Timer from '../../js/class/Timer.class'
 import List from 'list.js'
 import history from '../../history.json'
-import Swiper, { Navigation, Pagination, Autoplay } from 'swiper'
+// import Swiper, { Navigation, Pagination, Autoplay, Thumbs } from 'swiper'
+import AlertModal from '../../js/class/alertmodal'
 
 // configure Swiper to use modules
-Swiper.use([Navigation, Pagination, Autoplay])
+// Swiper.use([Navigation, Pagination, Autoplay])
 
 export default class runDashboardPage extends DashboardElementClass {
  constructor() {
   super()
-  this.userData = history
+  // this.userData = undefined
   this.userSelectedSkills = undefined
-  this.userTableList = undefined
+  this.skillUrl = undefined
   this.SwiperContainer = undefined
   this.tableUserHistory = undefined
 
+  this.numberOfLoadedItem = 2
+  this.maxItemofSkillCard = 3
+  this.loadMoreButton = undefined
   this.dataHistoryValue = []
 
   if (this._render() === false) {
    // Create function here
-   console.log('true')
    const newele = document.createElement('div')
    newele.textContent = 'dddd'
    this._appAppendChild(newele)
@@ -33,10 +37,13 @@ export default class runDashboardPage extends DashboardElementClass {
    return false
   }
 
+  this._storeUserSelectedSkills()
+
+  //  console.log(result);
   this._setupPageHeader()
+  this._setupSelectedSkillsSection()
   this._setupHistoryTable()
   this._setUserHistoryTable()
-  this._setupSelectedSkillsSection()
  }
 
  _setupHistoryTable() {
@@ -57,21 +64,65 @@ export default class runDashboardPage extends DashboardElementClass {
 
   this._appendSelectedSkillItems(selectedSkillsParent)
   this._appAppendChild(selectedSkillsSection)
-  this._executeSwiperContainer()
+  // this._executeSwiperContainer()
+  this._setupLoadMoreButton()
  }
 
- _setUserHistoryTable() {
-  const option = {
-   valueNames: this.dataHistoryValue,
-   item: this._userHistoryRow(),
-   pagination: true,
-   page: 3,
+ _toggledMoreSkillCard() {
+  Array.from(document.querySelectorAll('.hiddenStyle')).map((item, index) => {
+   if (index < this.numberOfLoadedItem) {
+    item.classList.remove('hiddenStyle')
+   }
+  })
+ }
+
+ _removeLoadMoreButton() {
+  if (document.querySelectorAll('.hiddenStyle').length === 0) {
+   this.loadMoreButton.style.display = 'none'
   }
-
-  const values = this.userData.history
-  this.tableUserHistory = new List('dataTable', option, values)
-  this._setTableEventListener()
  }
+ _setUserHistoryTable() {
+  this.userSelectedSkills
+   .then((data) => {
+    // var showpage = 1
+    console.log(data)
+    const option = {
+     valueNames: this.dataHistoryValue,
+     item: this._userHistoryRow(),
+     pagination: true,
+     page: 3,
+    }
+
+    data.history.map((history) => {
+     const newTimeMinutes = new Timer({
+      duration: history.timeused,
+     })._getTimeStringWithThai()
+     history.timeused = newTimeMinutes
+    })
+
+    const values = data.history
+    this.tableUserHistory = new List('dataTable', option, values)
+    // this.tableUserHistory.show(2,4)
+    this._setTableEventListener()
+   })
+   .catch((err) => {})
+  // document.querySelector('#nextTable').addEventListener('click', (e) => {
+  //  let isLast =
+  //   this.tableUserHistory.i >
+  //   this.tableUserHistory.matchingItems.length - this.tableUserHistory.page
+  //  if (!isLast) {
+  //   showpage = showpage + 3
+  //   this.tableUserHistory.show(showpage, 3)
+  //   console.log(showpage)
+  //  }
+  //  if (showpage >= this.tableUserHistory.items.length) {
+  //   showpage = 1
+  //   console.log(showpage)
+  //  }
+  // })
+ }
+
+ _setUpSkillLoadMore() {}
 
  _setTableEventListener() {
   this.tableUserHistory.on('searchComplete', () => {
@@ -92,76 +143,113 @@ export default class runDashboardPage extends DashboardElementClass {
   return numberOflist.length
  }
 
- _executeSwiperContainer() {
-  this.SwiperContainer = new Swiper('.swiper-container', {
-   slidesPerView: 3,
-   spaceBetween: 15,
-   autoplay: {
-    delay: 3500,
-    disableOnInteraction: true,
-   },
-   loop: true,
-   navigation: {
-    nextEl: '.swiper-button-next',
-    prevEl: '.swiper-button-prev',
-   },
-   breakpoints: {
-    // when window width is >= 320px
-    320: {
-     slidesPerView: 2,
-     spaceBetween: 20,
-    },
-    // when window width is >= 480px
-    480: {
-     slidesPerView: 2,
-     spaceBetween: 20,
-    },
-    // when window width is >= 640px
-    640: {
-     slidesPerView: 2,
-     spaceBetween: 20,
-    },
-    768: {
-     slidesPerView: 3,
-     spaceBetween: 20,
-    },
-   },
-  })
- }
+ //  _executeSwiperContainer() {
+ //   this.SwiperContainer = new Swiper('.swiper-container', {
+ //    slidesPerView: 3,
+ //    spaceBetween: 15,
+ //    autoplay: {
+ //     delay: 3500,
+ //     disableOnInteraction: true,
+ //    },
+ //    loop: false,
+ //    navigation: {
+ //     nextEl: '.swiper-button-next',
+ //     prevEl: '.swiper-button-prev',
+ //    },
+ //    breakpoints: {
+ //     // when window width is >= 320px
+ //     320: {
+ //      slidesPerView: 2,
+ //      spaceBetween: 20,
+ //     },
+ //     // when window width is >= 480px
+ //     480: {
+ //      slidesPerView: 2,
+ //      spaceBetween: 20,
+ //     },
+ //     // when window width is >= 640px
+ //     640: {
+ //      slidesPerView: 2,
+ //      spaceBetween: 20,
+ //     },
+ //     768: {
+ //      slidesPerView: 3,
+ //      spaceBetween: 20,
+ //     },
+ //    },
+ //   })
+ //  }
 
  _appendHistoryKeyToDataHistoryValue() {
-  if (this.userData !== undefined) {
-   for (const key in this.userData.history[0]) {
-    this.dataHistoryValue.push(key)
-   }
-  }
+  this.userSelectedSkills
+   .then((data) => {
+    for (const key in data.history[0]) {
+     this.dataHistoryValue.push(key)
+    }
+   })
+   .catch((err) => {})
  }
 
  _appendSelectedSkillItems(selectedSkillsParent) {
-  for (let i = 0; i < this.userData.items.length; i++) {
-   const skillcard = new this.Skillcard({
-    relatedskill: this.userData.items[i].skills,
-    titlename: this.userData.items[i].testname,
-    term: `${this.userData.items[i].choicenumber} ข้อ ${
-     this.userData.items[i].time == null
-      ? '/ ไม่กำหนดเวลา'
-      : this.userData.items[i].time
-    }`,
-    parents: selectedSkillsParent,
+  this.userSelectedSkills
+   .then((result) => {
+    result.items.map((item, index) => {
+     const timer = new Timer({
+      duration: item.time,
+     })
+     //  console.log(timer._getMinutes())
+     const skillcard = new this.Skillcard({
+      relatedskill: item.skills,
+      titlename: item.testname,
+      term: `${item.choicenumber} ข้อ ${
+       item.time == null
+        ? '/ ไม่กำหนดเวลา'
+        : '/ ' + timer._getMinutes() + ' นาที'
+      }`,
+      parents: selectedSkillsParent,
+      img: item.img,
+      testingType: item.testingtype,
+     })
+
+     this._setupEventSelectedSkillButton(skillcard.button)
+     if (index > this.maxItemofSkillCard - 1) {
+      skillcard.mainContainer.classList.add('hiddenStyle')
+     }
+    })
    })
-   this._setupEventSelectedSkillButton(skillcard.button)
-  }
+   .catch((err) => {})
  }
 
  _setupEventSelectedSkillButton(button) {
-  return button.addEventListener('click', (e) => {
-   e.preventDefault()
-
-   const a = new this.confirmModal({})
-   a.trueButton.addEventListener('click', (e) => {
-    window.location.href = './testing'
+  button.addEventListener('click', (e) => {
+   const confirmModal = new this.confirmModal({
+    headerText: 'ยืนยัน',
+    ModalContent: `การทดสอบมีเงื่อนไขตามที่อธิบายไว้ดังนี้`,
+    skillQueryString: e.target.value,
+   })
+   confirmModal.trueButton.addEventListener('click', () => {
+    localStorage.setItem('skillsets', e.target.dataset.skillsets)
+    console.log(localStorage.getItem('skillsets'))
+    window.location.href = `./testing/?${e.target.value}`
    })
   })
+ }
+
+ _askToDoTesting() {
+  //  If send this to ask to test if find id record just resp as a result then just redirect to result page
+  window.location.href = `./testing?skill=null`
+ }
+
+ _setupLoadMoreButton() {
+  this.loadMoreButton = document.querySelector('#loadmore')
+  this.loadMoreButton.addEventListener(
+   'click',
+   (e) => {
+    this._toggledMoreSkillCard()
+    this._removeLoadMoreButton()
+   },
+   false
+  )
  }
 
  _getTableElement() {
@@ -169,11 +257,21 @@ export default class runDashboardPage extends DashboardElementClass {
  }
 
  _storeUserSelectedSkills() {
-  this.userSelectedSkills = new Apiservice()
-   ._getQuestionObjects()
-   .then((resp) => {
-    return resp.json()
-   })
+  this.userSelectedSkills = new Apiservice()._reqToGetUserSelectedSkills()
+ }
+
+ _showAlertErrorModal(err) {
+  new AlertModal({
+   alertMsg: err,
+   type: 'error',
+  })
+ }
+
+ _showAlertSuccessModal(text) {
+  new AlertModal({
+   alertMsg: text,
+   type: 'success',
+  })
  }
 
  _requestToUserHistory() {
