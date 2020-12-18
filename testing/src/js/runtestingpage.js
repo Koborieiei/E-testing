@@ -35,7 +35,6 @@ export default class runTestingPageClass extends HtmlElementClass {
   this.counterNumber = undefined
   this.timerText = undefined
   this.timeLeft = undefined
-  this.media = window.matchMedia('(max-width: 500px)')
 
   this.countTotalExistedAnswer = 0
 
@@ -106,31 +105,29 @@ export default class runTestingPageClass extends HtmlElementClass {
 
  _setTimeCountdown() {
   this.availableQuestion.then((data) => {
-   this.timeLeft =
-    data.testinginfo.timeleft != undefined
-     ? parseInt(data.testinginfo.timeleft)
-     : data.testinginfo.timeleft
-     
-    //  this.timeleft = 10;
+   this.timeLeft = new Timer({
+    duration:
+     data.testinginfo.timeleft != undefined
+      ? parseInt(data.testinginfo.timeleft)
+      : data.testinginfo.timeleft,
+   })
 
-   // Waiting to split into chuck function
-   let minutes = parseInt((this.timeLeft / 60) % 60, 10)
-   let seconds = parseInt(this.timeLeft % 60, 10)
-   let hour = parseInt((this.timeLeft / 3600) % 24, 10)
+   console.log(this.timeLeft.duration)
 
-   hour = hour < 10 ? '0' + hour : hour
-   minutes = minutes < 10 ? '0' + minutes : minutes
-   seconds = seconds < 10 ? '0' + seconds : seconds
+   // this.timeLeft.duration = 
+   this._setTimeCountdownText()
 
-   this.timerText.textContent =
-    this.timeLeft != undefined
-     ? `${hour}:${minutes}:${seconds}`
-     : `ไม่จำกัดเวลา`
-
-   if (this.timeLeft != undefined) {
+   if (this.timeLeft.duration != undefined) {
     this._startTimer(this.timerText)
    }
   })
+ }
+
+ _setTimeCountdownText() {
+  this.timerText.textContent =
+   this.timeLeft.duration != undefined
+    ? `${this.timeLeft._getHourIncludeZero()}:${this.timeLeft._getMinutesIncludeZero()}:${this.timeLeft._getSecondIncludeZero()}`
+    : `ไม่จำกัดเวลา`
  }
 
  _setCounterNumber() {
@@ -345,32 +342,22 @@ export default class runTestingPageClass extends HtmlElementClass {
  }
 
  _startTimer(display) {
-  var hour, minutes, seconds, intervalId
-  // this.timeLeft = 2
+  this.countDownInterval = setInterval(() => {
+   display.textContent = `${this.timeLeft._getHourIncludeZero()}:${this.timeLeft._getMinutesIncludeZero()}:${this.timeLeft._getSecondIncludeZero()}`
+   localStorage.setItem('timeleft', this.timeLeft.duration)
+   this._updateUserCountDownTime(this.timeLeft._getSecondIncludeZero())
 
-  // this._setUptimeCountDownUserLog()
-
-  intervalId = setInterval(() => {
-   minutes = parseInt((this.timeLeft / 60) % 60, 10)
-   hour = parseInt((this.timeLeft / 3600) % 24, 10)
-   seconds = parseInt(this.timeLeft % 60, 10)
-
-   hour = hour < 10 ? '0' + hour : hour
-   minutes = minutes < 10 ? '0' + minutes : minutes
-   seconds = seconds < 10 ? '0' + seconds : seconds
-
-   display.textContent = `${hour}:${minutes}:${seconds}`
-   localStorage.setItem('timeleft', this.timeLeft)
-
-   this._updateUserCountDownTime(seconds)
-
-   if (--this.timeLeft < 0) {
-    this._alertTimeOutModal()
-    clearInterval(this.sendLogUpdateInterval)
-    clearInterval(intervalId)
-    // this._IsRequestSuccess()
-   }
+   this.timeLeft._reducingTimeLeft()
+   this._isTimeUp()
   }, 1000)
+ }
+
+ _isTimeUp() {
+  if (this.timeLeft.duration < 0) {
+   this._alertTimeOutModal()
+   clearInterval(this.sendLogUpdateInterval())
+   clearInterval(this.countDownInterval())
+  }
  }
 
  _updateUserCountDownTime(seconds) {
@@ -402,11 +389,11 @@ export default class runTestingPageClass extends HtmlElementClass {
   setTimeout(() => {
    window.location.href = '../showresult?' + jsonEncodeToUri
   }, 1000)
-  // console.log(jsonEncodeToUri)
  }
 
  _updateUserLog() {
   this.userTimeleftLogUpdate.timeleft = this._getTimeLeft()
+  console.log(this._getTimeLeft())
 
   new Apiservice()
    ._reqToUpdateUserTime(this.userTimeleftLogUpdate)
@@ -591,7 +578,7 @@ export default class runTestingPageClass extends HtmlElementClass {
  }
 
  _getTimeLeft() {
-  return parseInt(this.timeLeft)
+  return parseInt(this.timeLeft.duration)
  }
 
  _changeSuccessText() {
@@ -601,6 +588,7 @@ export default class runTestingPageClass extends HtmlElementClass {
  _reverseTextToNormal() {
   this.nextButton.button.textContent = 'ถัดไป'
  }
+
  _thorwNewErrorModal() {
   new this.alertModal({
    alertMsg: 'เกิดข้อผิดพลาด',

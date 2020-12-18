@@ -35,6 +35,7 @@ export default class runDashboardPage extends DashboardElementClass {
    this._setupSelectedSkillsSection()
    this._setupHistoryTable()
    this._setUserHistoryTable()
+   //  new Apiservice._unDisplayLoadingScreen()
   } catch (error) {
    console.log(error)
    //  this._showEmptySkillAlert()
@@ -194,7 +195,7 @@ export default class runDashboardPage extends DashboardElementClass {
  }
 
  _detectErrorMassage(msg) {
-  if (msg == 'no skill! you have to select skill first') {
+  if (msg == 'no skill! you have to select skill first' || !msg) {
    throw 'test'
   }
  }
@@ -215,7 +216,7 @@ export default class runDashboardPage extends DashboardElementClass {
       term: `${item.choicenumber} ข้อ ${
        item.time == null
         ? '/ ไม่กำหนดเวลา'
-        : '/ ' + timer._getMinutes() + ' นาที'
+        : '/ ' + timer._getOnlyMinuteAndSecondString()
       }`,
       parents: selectedSkillsParent,
       img: item.img,
@@ -279,10 +280,10 @@ export default class runDashboardPage extends DashboardElementClass {
 
  _storeUserSelectedSkills() {
   this.userSelectedSkills = new Apiservice()._reqToGetUserSelectedSkills()
+  // this.userSelectedSkills = history.items
   // this.userSelectedSkills = false
-  if (!this.userSelectedSkills) {
-   throw 'Yeah'
-  }
+
+  //  document.querySelector('#loading').classList.add('none')
  }
 
  _showAlertErrorModal(err) {

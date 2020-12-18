@@ -30,3 +30,4 @@ pnpm-debug.log*
 *.json
 git pull origin master --rebase
 
+alert_con.html
