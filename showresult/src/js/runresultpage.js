@@ -76,11 +76,11 @@ export default class runResultPage extends HtmlElementClass {
   })
 
   timeLeftDuration._getMinutesIncludeZero()
-  this._getTimerElement().textContent = `${timeLeftDuration._getHourIncludeZero()}:${timeLeftDuration._getMinutesIncludeZero()}:${timeLeftDuration._getSecondIncludeZero()}`
+  this._getTimerElement().textContent = `${timeLeftDuration.string}`
  }
 
  _setTotalAnswerText() {
-  //   Waiting to change
+
   this._getTotalAnswerElement().textContent = `${this._getTestingTotalAnswered()}/${this._getTotalOfQuestionNumber()}`
  }
 

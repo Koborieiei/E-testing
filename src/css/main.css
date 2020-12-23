@@ -177,3 +177,21 @@ background-color: rgb(233, 233, 233);
   border-color:rgb(233, 233, 233);
 }
 
+#progressBar {
+  max-height: 80px;
+
+}
+
+.circle {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  margin-left: 4px;
+  font-size: 14px;
+  color: #19276B;
+  line-height: 19px;
+  text-align: center;
+  background:rgba(209, 211, 226, 0.5);
+  display: inline-block;
+  font-weight: 700;
+}

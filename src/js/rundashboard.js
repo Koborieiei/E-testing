@@ -2,9 +2,12 @@ import DashboardElementClass from '../../js/class/dashboardelement'
 import Apiservice from '../../js/class/services'
 import Timer from '../../js/class/Timer'
 import List from 'list.js'
+// import ShowProgressBar from '../../js/class/progressbar.class'
+
 import history from '../../history.json'
 // import Swiper, { Navigation, Pagination, Autoplay, Thumbs } from 'swiper'
 import AlertModal from '../../js/class/alertmodal'
+import TestingHeader from '../../js/class/TestingHeader'
 
 // configure Swiper to use modules
 // Swiper.use([Navigation, Pagination, Autoplay])
@@ -32,6 +35,8 @@ export default class runDashboardPage extends DashboardElementClass {
    this._storeUserSelectedSkills()
    //  console.log(result);
    this._setupPageHeader()
+  //  this._setCountinueTestingElement()
+
    this._setupSelectedSkillsSection()
    this._setupHistoryTable()
    this._setUserHistoryTable()
@@ -49,6 +54,18 @@ export default class runDashboardPage extends DashboardElementClass {
    this._generateEmptySkillAlert(),
    selectedSkillsParent
   )
+ }
+
+ _setCountinueTestingElement() {
+  const parent = this._generateExistingTestSection()
+  this._appAppendChild(parent)
+
+  const testinghead = new TestingHeader({
+   containerParent: parent,
+  })
+
+
+  // testinghead.progress._setInitiatedProgressBarValue()
  }
 
  _setupHistoryTable() {
@@ -88,8 +105,6 @@ export default class runDashboardPage extends DashboardElementClass {
  _setUserHistoryTable() {
   this.userSelectedSkills
    .then((data) => {
-    // var showpage = 1
-    console.log(data)
     const option = {
      valueNames: this.dataHistoryValue,
      item: this._userHistoryRow(),
@@ -125,8 +140,6 @@ export default class runDashboardPage extends DashboardElementClass {
   //  }
   // })
  }
-
- _setUpSkillLoadMore() {}
 
  _setTableEventListener() {
   this.tableUserHistory.on('searchComplete', () => {
@@ -191,7 +204,9 @@ export default class runDashboardPage extends DashboardElementClass {
      this.dataHistoryValue.push(key)
     }
    })
-   .catch((err) => {})
+   .catch((err) => {
+    console.log(err)
+   })
  }
 
  _detectErrorMassage(msg) {

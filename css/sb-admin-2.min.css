@@ -2126,7 +2126,7 @@ a.btn.disabled, fieldset:disabled a.btn {
 
 .btn-primary {
     color: #fff;
-    background-color: #19276B;
+    background-color: #7c7f8d;
     border-color: #19276B
 }
 
@@ -2157,9 +2157,9 @@ a.btn.disabled, fieldset:disabled a.btn {
 }
 
 .btn-secondary {
-    color: #fff;
-    background-color: #858796;
-    border-color: #858796
+    color: #19276B;
+    background-color: #D1D3E2 ;
+    border-color: #D1D3E2
 }
 
 .btn-secondary:hover {
@@ -5407,7 +5407,8 @@ a.close.disabled {
     line-break: auto;
     font-size: .875rem;
     word-wrap: break-word;
-    opacity: 0
+    opacity: 0;
+
 }
 
 .tooltip.show {
@@ -5418,7 +5419,8 @@ a.close.disabled {
     position: absolute;
     display: block;
     width: .8rem;
-    height: .4rem
+    height: .4rem;
+
 }
 
 .tooltip .arrow::before {
@@ -5439,7 +5441,9 @@ a.close.disabled {
 .bs-tooltip-auto[x-placement^=top] .arrow::before, .bs-tooltip-top .arrow::before {
     top: 0;
     border-width: .4rem .4rem 0;
-    border-top-color: #000
+    border-top-color: #000;
+    
+
 }
 
 .bs-tooltip-auto[x-placement^=right], .bs-tooltip-right {
@@ -5455,7 +5459,7 @@ a.close.disabled {
 .bs-tooltip-auto[x-placement^=right] .arrow::before, .bs-tooltip-right .arrow::before {
     right: 0;
     border-width: .4rem .4rem .4rem 0;
-    border-right-color: #000
+    border-right-color: #fff
 }
 
 .bs-tooltip-auto[x-placement^=bottom], .bs-tooltip-bottom {

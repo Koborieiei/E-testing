@@ -41,23 +41,24 @@ export default class runTestingPageClass extends HtmlElementClass {
   this.currentProgressBarValue = undefined
   this.progressBarValuePerTime = undefined
   this.testingProgressBar = undefined
+  this.testName = undefined
 
   this._runTestingPage()
  }
 
  _runTestingPage() {
-  //  this._changeEtestingLinkToDefault()
+  this._addWindowBeforeUnloadEvent()
   this._storeAvailableQuestion()
   this._setupTotalQuestionNumber()
   this._setAnswerObjectSkillId()
   this._setExistedItemToAnswerObject()
+  this._setUpTestingId()
+
   this.availableQuestion
    .then((data) => {
     if (data.status === 500) {
      throw data
     }
-
-    this._setUpTestingId()
 
     this._setPageHeader()
     this._setupProgressBar()
@@ -89,32 +90,37 @@ export default class runTestingPageClass extends HtmlElementClass {
  }
 
  _setPageHeader() {
+  console.log(this.answerObject.testingid)
   const questionHeaderNode = this._generateQuestionHeader()
+  const testNameSplitedString = this.testName.split('con')[0].toUpperCase()
   this.counterNumber = questionHeaderNode.querySelector('h4#counterNumber')
   this.totalQuestion = questionHeaderNode.querySelector(
    'h4#totalQuestionNumber'
   )
 
+  questionHeaderNode.querySelector(
+   '#testMainTextHeader'
+  ).textContent = `${testNameSplitedString}`
+  questionHeaderNode.querySelector(
+   '#testSecondTextHeader'
+  ).textContent = this._questionSecondTextHeader(testNameSplitedString)
+
+  console.log(this._getTestingRequestData())
   this.timerText = questionHeaderNode.querySelector('h5#timer')
 
   this._setCounterNumber()
   this._setTotalQuestionNumber()
   this._bindCounterNumber()
-  return this._appAppendChild(questionHeaderNode)
+  this._appAppendChild(questionHeaderNode)
  }
 
  _setTimeCountdown() {
   this.availableQuestion.then((data) => {
    this.timeLeft = new Timer({
-    duration:
-     data.testinginfo.timeleft != undefined
-      ? parseInt(data.testinginfo.timeleft)
-      : data.testinginfo.timeleft,
+    duration: data.testinginfo.timeleft,
    })
 
-   console.log(this.timeLeft.duration)
-
-   // this.timeLeft.duration = 
+   // this.timeLeft.duration =
    this._setTimeCountdownText()
 
    if (this.timeLeft.duration != undefined) {
@@ -128,6 +134,9 @@ export default class runTestingPageClass extends HtmlElementClass {
    this.timeLeft.duration != undefined
     ? `${this.timeLeft._getHourIncludeZero()}:${this.timeLeft._getMinutesIncludeZero()}:${this.timeLeft._getSecondIncludeZero()}`
     : `ไม่จำกัดเวลา`
+
+  // console.log(this.timeLeft.duration)
+  // this.timerText.textContent = `${this.timeLeft._getHourIncludeZero()}:${this.timeLeft._getMinutesIncludeZero()}:${this.timeLeft._getSecondIncludeZero()}`
  }
 
  _setCounterNumber() {
@@ -344,7 +353,7 @@ export default class runTestingPageClass extends HtmlElementClass {
  _startTimer(display) {
   this.countDownInterval = setInterval(() => {
    display.textContent = `${this.timeLeft._getHourIncludeZero()}:${this.timeLeft._getMinutesIncludeZero()}:${this.timeLeft._getSecondIncludeZero()}`
-   localStorage.setItem('timeleft', this.timeLeft.duration)
+  //  localStorage.setItem('timeleft', this.timeLeft.duration)
    this._updateUserCountDownTime(this.timeLeft._getSecondIncludeZero())
 
    this.timeLeft._reducingTimeLeft()
@@ -355,8 +364,8 @@ export default class runTestingPageClass extends HtmlElementClass {
  _isTimeUp() {
   if (this.timeLeft.duration < 0) {
    this._alertTimeOutModal()
-   clearInterval(this.sendLogUpdateInterval())
-   clearInterval(this.countDownInterval())
+   clearInterval(this.sendLogUpdateInterval)
+   clearInterval(this.countDownInterval)
   }
  }
 
@@ -372,6 +381,7 @@ export default class runTestingPageClass extends HtmlElementClass {
    ._reqToSendTotalResult(this.answerObject)
    .then((resp) => {
     this._redirectToResultPage(resp)
+    // console.log(resp)
     this._validateSuccessRequest(resp)
    })
    .catch((err) => {
@@ -381,19 +391,35 @@ export default class runTestingPageClass extends HtmlElementClass {
  }
 
  _redirectToResultPage(data) {
+  this._removeBeforeUnLoadEventListener()
   localStorage.setItem(
    'progressbarvalue',
    this.testingProgressBar.currentValueOfProgressBar
   )
+
   const jsonEncodeToUri = encodeURIComponent(JSON.stringify(data))
   setTimeout(() => {
-   window.location.href = '../showresult?' + jsonEncodeToUri
+   window.location.assign(`../showresult?${jsonEncodeToUri}`)
   }, 1000)
+ }
+
+ _confirmBeforeUnload(e) {
+  var dialogText = 'Dialog text here'
+  e.returnValue = dialogText
+  return dialogText
+ }
+
+ _removeBeforeUnLoadEventListener() {
+  window.removeEventListener('beforeunload', this._confirmBeforeUnload)
+ }
+
+ _addWindowBeforeUnloadEvent() {
+  window.addEventListener('beforeunload', this._confirmBeforeUnload)
  }
 
  _updateUserLog() {
   this.userTimeleftLogUpdate.timeleft = this._getTimeLeft()
-  console.log(this._getTimeLeft())
+  // console.log(this._getTimeLeft())
 
   new Apiservice()
    ._reqToUpdateUserTime(this.userTimeleftLogUpdate)
@@ -442,6 +468,7 @@ export default class runTestingPageClass extends HtmlElementClass {
    this.answerObject.testingid = parseInt(data.testinginfo.id)
    this.answerObject.recentquestion = parseInt(data.testinginfo.recentquestion)
    this.userTimeleftLogUpdate.testingid = parseInt(data.testinginfo.id)
+   this.testName = data.testinginfo.type
   })
  }
 
