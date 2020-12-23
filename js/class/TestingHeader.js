@@ -44,12 +44,22 @@ class TestingHeader extends HtmlElementClass {
  }
 
  _setUpProgressBar() {
-  //   const progress = #progressBar'
+  const progressBarOption = {
+   color: '#1CC88A',
+   trailColor: '#D1D3E2',
+   svgStyle: {
+    width: '100%',
+    height: '8px',
+   },
+  }
+
   this.progress = new ShowProgressBar({
    progressbarparent: this._getProgressBar(),
    actualValue: 10,
    maximumValue: 20,
+   options: progressBarOption,
   })
+  
   this.progress._setInitiatedProgressBarValue()
  }
 

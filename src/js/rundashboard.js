@@ -35,7 +35,7 @@ export default class runDashboardPage extends DashboardElementClass {
    this._storeUserSelectedSkills()
    //  console.log(result);
    this._setupPageHeader()
-  //  this._setCountinueTestingElement()
+   this._setCountinueTestingElement()
 
    this._setupSelectedSkillsSection()
    this._setupHistoryTable()
