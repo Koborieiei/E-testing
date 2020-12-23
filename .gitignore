@@ -3,7 +3,6 @@ node_modules
 
 /vendor
 /inc
-/js
 
 # local env files
 .env.local
