@@ -59,7 +59,7 @@ class TestingHeader extends HtmlElementClass {
    maximumValue: 20,
    options: progressBarOption,
   })
-  
+
   this.progress._setInitiatedProgressBarValue()
  }
 
