@@ -6,29 +6,37 @@ import ShowProgressBar from '../../js/class/progressbar.class'
 class TestingHeader extends HtmlElementClass {
  constructor({ containerParent }) {
   super()
-  //   this.testinginfo = testinginfo || undefined
+  //   this.testingInfo = testinginfo || undefined
   this.containerParent = containerParent || undefined
   this.progressaBarValue = undefined
   this.testingHeader = 'PRE-TESTING' || undefined
-  this.testingSkill = undefined
+  //   Waiting to change by fecthing skill from api endpoint
+  this.testingSkill = [
+   { skillid: 1, skillname: 'testskill1' },
+   { skillid: 2, skillname: 'testskill2' },
+  ]
 
-  this.existingTestTimer = new Timer({
-   duration: 5,
-  })
+  this.existingTestTimer = new Timer({ duration: 5 })
   this.mainBody = this._parserHtmlTag(this._remindExistingExamElement())
-
   this.existingTestCountDownInterval = undefined
 
+  // Construction Call function
+  this._initTestingHeader()
+ }
+
+ _initTestingHeader() {
   this._parentAppendChild()
   this._startTimer()
+  this._initToopTipFunction()
+  this._setUpProgressBar()
+ }
 
+ _initToopTipFunction() {
   $(function () {
    $('[data-toggle="tooltip"]').tooltip({
     template: `<div class="ml-1 tooltip" role="tooltip"><div class="arrow "></div><div class="tooltip-inner bg-white text-primary py-2 px-3 shadow-sm"></div></div>`,
    })
   })
-
-  this._setUpProgressBar()
  }
 
  _getParentNode() {
@@ -73,11 +81,6 @@ class TestingHeader extends HtmlElementClass {
    })
  }
 
- //  _createTestingHeader() {
- //   this.mainBody = this._generateExistedTestReminder()
- //   this.mainBody
- //  }
-
  _parentAppendChild() {
   //   this.mainBody = this._parserHtmlTag(this._remindExistingExamElement())
   this.containerParent.appendChild(this.mainBody)
@@ -96,11 +99,27 @@ class TestingHeader extends HtmlElementClass {
    this.existingTestTimer._reducingTimeLeft()
    this.existingTestTimer._adjustTimerDisplay(this._getTimerElement())
 
-   if (this.existingTestTimer.duration === 0) {
-    this._adjustButtonTextContent()
-    clearInterval(this.existingTestCountDownInterval)
-   }
+   this._isTestTimeOut()
   }, 1000)
+ }
+
+ _isTestTimeOut() {
+  if (this.existingTestTimer.duration === 0) {
+   this._showTimeOutAlert()
+   this._adjustButtonTextContent()
+   clearInterval(this.existingTestCountDownInterval)
+  }
+ }
+
+ _showTimeOutAlert() {
+  // console.log(decodeURI);
+  console.log(JSON.parse(decodeURIComponent(this._generateSkillURI())))
+  const timeOutAlertModal = new this.confirmModal({
+   ModalContent: 'tests',
+   headerText: 'การแจ้งเตือน',
+   backdrop: false,
+  })
+  timeOutAlertModal.falseButton.remove()
  }
 
  _adjustButtonTextContent() {
@@ -108,9 +127,14 @@ class TestingHeader extends HtmlElementClass {
   button.textContent = `จบการทดสอบ`
  }
 
+ _generateSkillURI() {
+  return encodeURIComponent(JSON.stringify(this.testingSkill))
+ }
+
  _remindExistingExamElement() {
   const skill = `Black tea<br>Green tea`
-  return `<div class=" bg-white rounded col-lg-12 col-md-6 col-sm-12 px-3 py-3">
+
+  return `<div data-skillur="${this._generateSkillURI()}" class=" bg-white rounded col-lg-12 col-md-6 col-sm-12 px-3 py-3">
          <div class="d-flex flex-row justify-content-between align-items-center">
              <div class="d-flex flex-column col-4 p-1">
                  <div>
@@ -140,7 +164,7 @@ class TestingHeader extends HtmlElementClass {
              <div class="d-flex flex-column p-1">
                  <div class="d-flex flex-column">
                      <div id="timeCounterParent" class="d-flex flex-row p-0 align-items-center">
-                         <a id='reDoExamActionButton' href="" class="btn btn-sm btn-secondary">ทดสอบ</a>
+                         <a id='reDoExamActionButton' href="" class="btn btn-sm btn-primary">ทดสอบ</a>
                      </div>
                  </div>
              </div>

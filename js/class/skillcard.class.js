@@ -94,7 +94,7 @@ export default class Skillcard {
  _generateRecommendBadge() {
   let newskills = []
 
-  this._isArrayOfRelatedSkill().map((skill) => {
+  this._ArrayOfRelatedSkill().map((skill) => {
    const badgeElement = this._parserHtmlTag(
     `<div data-badgeid="${skill.id}" class="my-1 mr-1 badge-secondary badge font-weight-light"></div>`
    )
@@ -114,7 +114,7 @@ export default class Skillcard {
   )}`
  }
 
- _isArrayOfRelatedSkill() {
+ _ArrayOfRelatedSkill() {
   if (Array.isArray(this.relatedskill) === true) {
    return this.relatedskill
   } else {

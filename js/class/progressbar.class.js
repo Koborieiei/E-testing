@@ -8,7 +8,7 @@ export default class ShowProgressBar {
   this.actualValue = actualValue || undefined
   this.valuePerUpdateTime = 1 / maximumValue
   this.currentValueOfProgressBar = actualValue / maximumValue
-  console.log(options)
+
 
   this._renderProgressBar()
  }
@@ -27,9 +27,12 @@ export default class ShowProgressBar {
   )
  }
 
+ _getCurrentValueOfProgressBar() {
+  return Number((this.actualValue / maximumValue).toFixed(10))
+ }
+
  _setInitiatedProgressBarValue() {
   this.progressBar.animate(Number(this.currentValueOfProgressBar.toFixed(10)))
-  //   this.progressBar.animate(0.5)
  }
 
  _updateProgressBarPerTime() {
