@@ -237,8 +237,6 @@ export default class HtmlElementClass {
 `
  }
 
- 
-
  _reduceDemical(percentage) {
   return Math.round(percentage)
  }

@@ -1,7 +1,9 @@
-export default class Skillcard {
- constructor({ relatedskill, titlename, term, img, id, parents, testingType }) {
-  this.relatedskill = relatedskill || undefined
-  this.titlename = titlename || undefined
+import ConfirmModal from '../../js/class/ConfirmModal'
+
+export default class SkillCard {
+ constructor({ relatedSkill, titleName, term, img, id, parents, testingType }) {
+  this.relatedSkill = relatedSkill || undefined
+  this.titleName = titleName || undefined
   this.term = term || undefined
   this.img = img || undefined
   this.id = id || null
@@ -14,6 +16,7 @@ export default class Skillcard {
   this.skillTitleContainer = undefined
   this.buttonContainer = undefined
   this.button = undefined
+
   this.skillIdContainers = {
    service: testingType,
    skill_id: [],
@@ -51,24 +54,25 @@ export default class Skillcard {
 
   this.skillTitleContainer = document.createElement('div')
   this.skillTitleContainer.classList.add('pt-3', 'mb-0', 'pl-3', 'bg-white')
+  this.skillTitleContainer.style.setProperty('min-height', '100px')
 
   const descriptionHeader = document.createElement('dt')
-  descriptionHeader.innerText = this.titlename
+  descriptionHeader.innerText = this.titleName
   descriptionHeader.classList.add('text-dark')
 
   const descriptionTerm = document.createElement('dd')
   descriptionTerm.classList.add('font-weight-light', 'text-secondary')
   descriptionTerm.innerText = this.term
 
-  this.reccomendSkillParent = document.createElement('div')
-  this.reccomendSkillParent.classList.add(
-   'my-3',
-   'd-flex',
-   'flex-row',
-   'flex-wrap',
-   'pl-3'
-  )
-  this.reccomendSkillParent.style.setProperty('min-height', '30px')
+  // this.reccomendSkillParent = document.createElement('div')
+  // this.reccomendSkillParent.classList.add(
+  //  'my-3',
+  //  'd-flex',
+  //  'flex-row',
+  //  'flex-wrap',
+  //  'pl-3'
+  // )
+  // this.reccomendSkillParent.style.setProperty('min-height', '30px')
   this.skillTitleContainer.appendChild(descriptionHeader)
   this.skillTitleContainer.appendChild(descriptionTerm)
 
@@ -78,47 +82,61 @@ export default class Skillcard {
   this.button = document.createElement('button')
   this.button.classList.add('btn', 'btn-primary')
   this.button.textContent = 'ทดสอบเลย'
+  this.button.addEventListener('click', (e) => {
+   this._alertTestingTermConfirmModal()
+  })
 
   buttonContainer.appendChild(this.button)
-
-  // this.mainContainer.appendChild(this.imageContainer)
   cardbody.appendChild(this.imageContainer)
   cardbody.appendChild(this.skillTitleContainer)
-  cardbody.appendChild(this.reccomendSkillParent)
   cardbody.appendChild(buttonContainer)
   this.mainContainer.appendChild(cardbody)
-  // this.mainContainer.appendChild(this.reccomendSkillParent)
-  // this.mainContainer.appendChild(buttonContainer)
  }
 
  _generateRecommendBadge() {
   let newskills = []
 
   this._ArrayOfRelatedSkill().map((skill) => {
-   const badgeElement = this._parserHtmlTag(
-    `<div data-badgeid="${skill.id}" class="my-1 mr-1 badge-secondary badge font-weight-light"></div>`
-   )
-
    this.skillIdContainers.skill_id.push(parseInt(skill.skillid))
    newskills.push({ skillid: skill.skillid, skillname: skill.skillname })
-   badgeElement.textContent = skill.skillname
-   this.reccomendSkillParent.appendChild(badgeElement)
   })
 
   this.button.dataset.skillsets = `${encodeURIComponent(
    JSON.stringify(newskills)
   )}`
+ }
 
-  this.button.value = `${encodeURIComponent(
+ _alertTestingTermConfirmModal() {
+  const confirmModal = new ConfirmModal({
+   headerText: 'ยืนยัน',
+   ModalContent: `การทดสอบมีเงื่อนไขตามที่อธิบายไว้ดังนี้ 
+   
+   1. การทดสอบมีระยะเวลาจำกัด (โปรดตรวจสอบก่อนเริ่ม)
+   2. ขณะเวลาการทดสอบห้ามเปิดเครื่องมืออเล็กทรอนิกส์อื่นๆ 
+   3. หากระบบมีปัญหาให้ติดมีที่เบอร์ 02-697-6451 
+   `,
+  })
+
+  // console.log(decodeURIComponent(this.button.dataset.skillsets))
+
+  confirmModal.trueButton.addEventListener('click', () => {
+   this._TestingTermConfirmModalAction()
+  })
+ }
+
+ _TestingTermConfirmModalAction() {
+  const encodeSkillSetParameter = encodeURIComponent(
    JSON.stringify(this.skillIdContainers)
-  )}`
+  )
+  localStorage.setItem('skillsets', this.button.dataset.skillsets)
+  window.location.href = `./testing/?${encodeSkillSetParameter}`
  }
 
  _ArrayOfRelatedSkill() {
-  if (Array.isArray(this.relatedskill) === true) {
-   return this.relatedskill
+  if (Array.isArray(this.relatedSkill) === true) {
+   return this.relatedSkill
   } else {
-   return new Array(this.relatedskill)
+   return new Array(this.relatedSkill)
   }
  }
 

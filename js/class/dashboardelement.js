@@ -1,13 +1,14 @@
 import Button from './button'
 import confirmModal from './ConfirmModal'
-import Skillcard from './skillcard.class'
+// import Skillcard from '../../src/components/Skillcard'
 import alertModal from './alertmodal'
+import Apiservice from './services'
 
 export default class DashboardElementClass {
  constructor() {
   this.body = undefined
   this.confirmModal = confirmModal || undefined
-  this.Skillcard = Skillcard || undefined
+//   this.Skillcard = Skillcard || undefined
   this.alertModal = alertModal || undefined
  }
 

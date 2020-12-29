@@ -1,7 +1,8 @@
 export default class Questionselector {
- constructor({ questions, parent }) {
+ constructor({ questions, parent, durationInterval }) {
   this.questions = questions
   this.parent = parent
+  this.durationInterval = durationInterval || undefined
   this.testingRecentQuestion = parseInt(questions.testinginfo.recentquestion)
 
   this.statusClassLists = [
@@ -19,6 +20,7 @@ export default class Questionselector {
   this.selector = undefined
   this.countNumberOfChilds = 0
   this.selectorParent = undefined
+  this.assignQuestionTime = undefined
 
   this._generateSelector()
  }
@@ -130,8 +132,6 @@ export default class Questionselector {
   }
  }
 
- _checkIndexOfSelector(target) {}
-
  _activeQuestionDiv(target) {
   const targetDiv = document.querySelector('div[data-index="' + target + '"]')
   this._hindQuestion()
@@ -156,12 +156,67 @@ export default class Questionselector {
 
  _showQuestion(targetdiv) {
   targetdiv.classList.add('active')
+  //   this._assignQuestionStartedTime()
+  this._getDurationInterval()
  }
 
  _hindQuestion() {
   const recentQuestion = document.querySelector('div.active')
   recentQuestion.classList.remove('active')
   recentQuestion.classList.add('none')
+ }
+
+ _getDurationInterval() {
+  console.log(this.durationInterval)
+ }
+
+ //  _assignQuestionStartedTime() {
+ //   clearInterval(this.assignQuestionTime)
+ //   let DurationTimer = 0
+ //   localStorage.setItem('duration', DurationTimer)
+ //   this.assignQuestionTime = setInterval(() => {
+ //    DurationTimer++
+ //    localStorage.setItem('duration', DurationTimer)
+ //    console.log(localStorage.getItem('duration'))
+ //   }, 1000)
+ //  }
+
+ _showQuestion(besideQuestion) {
+  // SHOW NEXT QUESTION
+  besideQuestion.classList.add('active')
+  besideQuestion.classList.remove('none')
+  this._assignQuestionStartedTime()
+ }
+
+ //  Need to be refactored
+
+ _clearInterval(interval) {
+  clearInterval(interval)
+ }
+
+ _activeInitiateQuestion(recentquestion) {
+  const recentQuestion = document.querySelector(
+   "[data-index='" + recentquestion + "']"
+  )
+  const recentQuestionParent = recentQuestion.parentElement
+  recentQuestion.classList.remove('none')
+  recentQuestion.classList.add('active')
+  recentQuestionParent.classList.remove('none')
+  this._assignQuestionStartedTime()
+ }
+ _assignQuestionStartedTime() {
+  //  console.log(assignQuestionTime)
+  //  if (assignQuestionTime) {
+  //   _clearInterval(assignQuestionTime)
+  //  }
+  this._clearInterval(this.assignQuestionTime)
+  let DurationTimer = 0
+  localStorage.setItem('duration', DurationTimer)
+  this.assignQuestionTime = setInterval(() => {
+   DurationTimer++
+   localStorage.setItem('duration', DurationTimer)
+   console.log(localStorage.getItem('duration'))
+  }, 1000)
  }
 }
 

@@ -1,6 +1,5 @@
-import { v4 as uuidv4 } from 'uuid'
-import Apiservice from '../class/services'
-import Choice from '../class/choice.class'
+import Apiservice from './services'
+import Choice from './choice.class'
 
 export default class Testingitem {
  constructor({
@@ -43,6 +42,7 @@ export default class Testingitem {
   this._createQuestion()
   this._generateChoices(this.itemChoices)
   this._apppendChild()
+
   // this._setUpLogsRecentQuestion()
  }
 
@@ -53,6 +53,7 @@ export default class Testingitem {
   this.mainBody.classList.add('py-3', 'none')
   //
   this.mainBody.dataset.index = this.questionNumber
+  this.mainBody.dataset.category = this.category
   this.mainBody.dataset.id = this.questionId
   this.mainContainer.appendChild(this.mainBody)
 
@@ -92,13 +93,10 @@ export default class Testingitem {
   // this.choiceCounter = 0
 
   itemChoices.map((choice) => {
-   //  this.choiceCounter++
-   //  console.log(this.answeredId)
    const newChoice = new Choice({
     id: choice.id,
     statement: choice.statment,
     questionnumber: this.questionNumber,
-    // prefix: this._checkPrefix(),
     body: this.itemContainers,
     answeredId: this.answeredId,
    })
@@ -147,55 +145,66 @@ export default class Testingitem {
 
  _setupRadioLabelEventListener(radioLabel) {
   radioLabel.addEventListener('click', () => {
-   this.choiceid = parseInt(radioLabel.dataset.choices)
-   this._checkActiveLabel()
-   this._appendAnswerToJson()
+   if (this._getAnswerCatagory()) {
+    this.choiceid = parseInt(radioLabel.dataset.choices)
+    this._checkActiveLabel()
+    this._appendAnswerToJson()
 
-   radioLabel.classList.add('active')
+    radioLabel.classList.add('active')
 
-   this._updateUserLogToServer()
-   const activebutton = document.querySelector('div.now-question')
-   activebutton.dataset.status = `selected-question`
+    this._updateUserLogToServer()
+    const activebutton = document.querySelector('div.now-question')
+    activebutton.dataset.status = `selected-question`
+   }
   })
+ }
+
+ _getDuration() {
+  return Number(localStorage.getItem('duration'))
  }
 
  _pushDataToAnswerJson() {
   this._updateAnswerCounter()
 
+  // console.log(localStorage.getItem('duration'))
+
   this.totalAnswers.recentquestion = this.questionNumber
-  // console.log(this._getAnswerCatagory())
+
   this._getAnswerCatagory().answers.push({
    choiceid: this.choiceid,
    questionid: parseInt(this.questionId),
    correct_answerid: this.correctAnswer,
+   duration: this._getDuration(),
   })
 
   console.log(this.totalAnswers)
  }
 
  _appendAnswerToJson() {
-  this._updateTimeleft()
   if (this._getIndexOfAnswer() === -1) {
    this._pushDataToAnswerJson()
-   //  this._updateCurrentUserLog()
    console.log('Req total push answer', this.totalAnswers)
   } else {
    this._changeAnsweredQuestion()
-   //  console.log('Req total update', this.totalAnswers)
   }
  }
 
  _updateTimeleft() {
   // this.logs.timeleft = this._getTimeRemaining()
-  this.totalAnswers.timeleft = this._getTimeRemaining()
+  // this.totalAnswers.timeleft = this._getTimeRemaining()
  }
 
- _updateCurrentUserLog() {
-  this.logs.recentquestion = this._getRecentQuestion()
-  this.logs.timeleft = this._getTimeRemaining()
-  this.logs.questionid = parseInt(this.questionId)
-  this.logs.correct_answerid = this.correctAnswer
-  this.logs.choiceid = this.choiceid
+ _getCurrentUserLogJson() {
+  return {
+   service: 'updateresult',
+   recentquestion: this._getRecentQuestion(),
+   //  timeleft: this._getTimeRemaining(),
+   testingid: this.totalAnswers.testingid,
+   questionid: parseInt(this.questionId),
+   correct_answerid: this.correctAnswer,
+   choiceid: this.choiceid,
+   duration: this._getDuration(),
+  }
 
   // console.log('Req total update answer', this.logs)
  }
@@ -207,16 +216,9 @@ export default class Testingitem {
     : this.totalAnswers.recentquestion
   return recentQuestion
  }
+
  async _updateUserLogToServer() {
-  new Apiservice()._reqToUpdateUserLog({
-   service: 'updateresult',
-   recentquestion: this._getRecentQuestion(),
-   timeleft: this._getTimeRemaining(),
-   testingid: this.totalAnswers.testingid,
-   questionid: parseInt(this.questionId),
-   correct_answerid: this.correctAnswer,
-   choiceid: this.choiceid,
-  })
+  new Apiservice()._reqToUpdateUserLog(this._getCurrentUserLogJson())
  }
 
  _checkActiveLabel() {
@@ -231,18 +233,9 @@ export default class Testingitem {
    .textContent
   let counterNumber = parseInt(this._getCounterNumberElement().textContent)
 
-  // if (
-  //  counterNumber < totalQuestionNumber ||
-  //  counterNumber < this.questionNumber
-  // ) {
   counterNumber++
-  // }
 
-  //   const counterNumber = parseInt(counterNumberElement.textContent) + 1
-
-  //   if (counterNumber <= this._getTotalNumberOfQuestion()) {
   counterNumberElement.textContent = `${counterNumber}`
-  //   }
  }
 
  _getTotalNumberOfQuestion() {
@@ -256,14 +249,31 @@ export default class Testingitem {
  }
 
  _getAnswerCatagory() {
-  return this.totalAnswers.items[this._checkIndexOfCategoryItem()]
+  try {
+   //  if (!this.totalAnswers.items[this._checkIndexOfCategoryItem()]) {
+   //   throw 'Not found Category'
+   //  }
+   if (this._checkIndexOfCategoryItem() == -1) {
+    throw `${this.category} Categoryid was not found, Please check category inside result object below ⬇️`
+   }
+   return this.totalAnswers.items[this._checkIndexOfCategoryItem()]
+  } catch (error) {
+   console.warn(error)
+   console.log(this.totalAnswers)
+  }
  }
 
  _getIndexOfAnswer() {
-  const indexOfCategoryItem = this._getAnswerCatagory().answers.findIndex(
-   (question) => question.questionid == this.questionId
-  )
-  return indexOfCategoryItem
+  try {
+   if (this._getAnswerCatagory()) {
+    const indexOfCategoryItem = this._getAnswerCatagory().answers.findIndex(
+     (question) => question.questionid == this.questionId
+    )
+    return indexOfCategoryItem
+   }
+  } catch (error) {
+   console.log(error)
+  }
  }
 
  _checkIndexOfCategoryItem() {
@@ -275,26 +285,24 @@ export default class Testingitem {
  }
 
  _changeAnsweredQuestion() {
-  const recentObjectOfAnswer = this._getAnswerCatagory().answers[
-   this._getIndexOfAnswer()
-  ]
+  if (this._getAnswerCatagory()) {
+   const recentObjectOfAnswer = this._getAnswerCatagory().answers[
+    this._getIndexOfAnswer()
+   ]
 
-  recentObjectOfAnswer.choiceid = this.choiceid
-  // this.logs.choiceid = this.choiceid
- }
-
- _getTimeRemaining() {
-  return parseInt(localStorage.getItem('timeleft'))
+   recentObjectOfAnswer.choiceid = this.choiceid
+   recentObjectOfAnswer.duration = this._getDuration()
+  }
  }
 
  _getTotalNumberOfAnswer() {
   return this.totalAnswers.items.length
  }
 
- _getChoiceId() {
-  //   console.log(this.radioInput)
-  //   return parseInt(this.radioInput.dataset.choices)
- }
+ //  _getChoiceId() {
+ //   console.log(this.radioInput)
+ //   return parseInt(this.radioInput.dataset.choices)
+ //  }
 
  _setUpLogsRecentQuestion() {
   // this.logs.recentquestion = this.totalAnswers.recentquestion
@@ -307,4 +315,11 @@ export default class Testingitem {
  _apppendChild() {
   this.body.appendChild(this.mainBody)
  }
+}
+
+export const _getIndexOfAnswer = (totalAnswers, category) => {
+ const indexOfCategoryItem = totalAnswers.items.findIndex(
+  (question) => question.category == category
+ )
+ return indexOfCategoryItem
 }

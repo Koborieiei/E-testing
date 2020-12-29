@@ -42,7 +42,7 @@ export default class Apiservice {
  }
 
  async _reqToGetUserSelectedSkills() {
-//   this._displayLoadingScreen()
+  //   this._displayLoadingScreen()
   const resp = await fetch(
    './ajax/getObjectdata.php?',
    //   './APIlocaltest/getObjectdata.php?',

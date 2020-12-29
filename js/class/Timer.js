@@ -1,6 +1,6 @@
 export default class Timer {
  constructor({ duration }) {
-  this.duration = duration
+  this.duration = duration === 0 ? null : duration
   this.hour = undefined
   this.minutes = undefined
   this.seconds = undefined
@@ -11,12 +11,19 @@ export default class Timer {
  }
 
  _timeToString() {
-  this.string =
-   this.duration === null ? 'ไม่จำกัดเวลา' : this._getTimeStringWithOutThai()
+  return this.duration === null
+   ? 'ไม่จำกัดเวลา'
+   : this._getTimeStringWithOutThai()
+ }
+
+ _timeToStringWithThai() {
+  return this.duration === null
+   ? 'ไม่จำกัดเวลา'
+   : this._getOnlyMinuteAndSecondString()
  }
 
  _getOnlyMinuteAndSecondString() {
-  if (this.duration > 3600) {
+  if (this.duration >= 3600) {
    return `${this._getHour()} ชั่วโมง ${this._getMinutes()} นาที ${this._getSecondIncludeZero()} วินาที`
   }
 

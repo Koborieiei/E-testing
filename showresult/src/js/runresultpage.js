@@ -80,7 +80,6 @@ export default class runResultPage extends HtmlElementClass {
  }
 
  _setTotalAnswerText() {
-
   this._getTotalAnswerElement().textContent = `${this._getTestingTotalAnswered()}/${this._getTotalOfQuestionNumber()}`
  }
 
@@ -151,7 +150,7 @@ export default class runResultPage extends HtmlElementClass {
  _storeTestingResult() {
   const queryString = window.location.search.split('?')[1]
   this.testingResult = JSON.parse(decodeURIComponent(queryString))
-  console.log(JSON.parse(decodeURIComponent(queryString)))
+  //   console.log(JSON.parse(decodeURIComponent(queryString)))
  }
 
  _setupRetestButton() {
@@ -159,10 +158,10 @@ export default class runResultPage extends HtmlElementClass {
    e.preventDefault()
    const retestingConfirm = new this.confirmModal({
     headerText: 'ยืนยัน',
-    ModalContent: 'Would u like to retest again ?',
+    ModalContent: 'คุณต้องการทดสอบใหม่อีกครั้ง',
    })
-   retestingConfirm.trueButton.addEventListener('click', (e) => {
-    window.location.href = '../'
+   retestingConfirm.trueButton.addEventListener('click', () => {
+    history.go(-1)
    })
   })
  }
@@ -171,7 +170,7 @@ export default class runResultPage extends HtmlElementClass {
   this.dashboardButton.button.addEventListener('click', () => {
    const returnToDashboardConfirm = new this.confirmModal({
     headerText: 'ยืนยัน',
-    ModalContent: 'Would u like to back to dashboard ?',
+    ModalContent: 'คุณต้องการกลับไปหน้าแรกของ E-Testing',
    })
    returnToDashboardConfirm.trueButton.addEventListener('click', (e) => {
     //  Wait to send request to dash board

@@ -1,5 +1,5 @@
 import Apiservice from '../../../js/class/services'
-import testingItem from '../../../js/class/Testingitem'
+import TestingItem, * as QuestionController from '../../../js/class/Testingitem'
 import progressBar from '../../../js/class/progressbar.class'
 import Questionselector, * as QuestionselectorController from './class/questionselector'
 import HtmlElementClass from '../../../js/class/htmlelementclass'
@@ -25,6 +25,8 @@ export default class runTestingPageClass extends HtmlElementClass {
    timeleft: null,
    testingid: null,
   }
+
+  this.questionDuration = { items: 0 }
 
   // timeleft only send time
   // Testingid
@@ -75,9 +77,10 @@ export default class runTestingPageClass extends HtmlElementClass {
      //  this._displayNoQuestionError(err)
     } else {
      console.log(err)
-     this.body.innerHTML = `<div class="text-center mt-5"> <h2>ขออภัยเกิดข้อผิดพลาด </h2>
+     this.body.innerHTML = `<div class="text-center mt-5"> <h3>ขออภัย... </h4>
       Code: ${err.status}
-      msg: ${err.message}</div>`
+      msg: ${err.message}</div>
+      <div> ขณะนี้ระบบเกิดข้อผิดพลาด กรุณารอสักครู่ หรือ ทำการติดต่อเจ้าหน้าที่ </div>`
     }
    })
   //  Wait to build function
@@ -90,7 +93,7 @@ export default class runTestingPageClass extends HtmlElementClass {
  }
 
  _setPageHeader() {
-  console.log(this.answerObject.testingid)
+  // console.log(this.answerObject.testingid)
   const questionHeaderNode = this._generateQuestionHeader()
   const testNameSplitedString = this.testName.split('con')[0].toUpperCase()
   this.counterNumber = questionHeaderNode.querySelector('h4#counterNumber')
@@ -105,7 +108,7 @@ export default class runTestingPageClass extends HtmlElementClass {
    '#testSecondTextHeader'
   ).textContent = this._questionSecondTextHeader(testNameSplitedString)
 
-  console.log(this._getTestingRequestData())
+  // console.log(this._getTestingRequestData())
   this.timerText = questionHeaderNode.querySelector('h5#timer')
 
   this._setCounterNumber()
@@ -157,7 +160,7 @@ export default class runTestingPageClass extends HtmlElementClass {
 
  _createQuestionSelector() {
   this.availableQuestion.then((data) => {
-   new Questionselector({
+   this.Questionselector = new Questionselector({
     questions: data,
     parent: document.querySelector('#questionSelector'),
    })
@@ -176,6 +179,7 @@ export default class runTestingPageClass extends HtmlElementClass {
 
  _setPageButtonContainer() {
   const buttonPageContainerNode = this._generateTestPageButtonContainer()
+
   this._setNextButtonFunction()
   this._setBackButtonFunction()
   return this._appAppendChild(buttonPageContainerNode)
@@ -188,7 +192,7 @@ export default class runTestingPageClass extends HtmlElementClass {
 
    data.results.map((individualQuestion) => {
     // console.log(individualQuestion.answeredid)
-    new testingItem({
+    new TestingItem({
      directionText: individualQuestion.question,
      itemChoices: individualQuestion.answers,
      questionNumber: individualQuestion.index,
@@ -200,7 +204,7 @@ export default class runTestingPageClass extends HtmlElementClass {
      category: individualQuestion.category,
     })
    })
-   this._activeQuestion(recentquestion)
+   this.Questionselector._activeInitiateQuestion(recentquestion)
   })
  }
 
@@ -213,8 +217,6 @@ export default class runTestingPageClass extends HtmlElementClass {
  }
 
  _finishTheTest() {
-  // const thisQuestion = this._getThisQuestion()
-  // Change it when swap question is finished
   if (this._isTestProved()) {
    this._showTestConfirmModal()
   }
@@ -235,7 +237,7 @@ export default class runTestingPageClass extends HtmlElementClass {
  _showTestConfirmModal() {
   const confirmModal = new this.confirmModal({
    headerText: 'ยืนยัน',
-   ModalContent: 'Would you like to submit the test ?',
+   ModalContent: 'คุณต้องการส่งคำตอบทั้งหมด',
   })
 
   confirmModal.trueButton.addEventListener('click', (e) => {
@@ -245,6 +247,8 @@ export default class runTestingPageClass extends HtmlElementClass {
  }
 
  _setBackButtonFunction() {
+  this._setUpDisableButton()
+  this._setUpNextButton()
   this.backButton.button.addEventListener('click', () => {
    this._validateFirstQuestion()
    this._validateLastQuesiton()
@@ -276,7 +280,7 @@ export default class runTestingPageClass extends HtmlElementClass {
   if (besideQuestion) {
    this._switchDisableButton()
    this._hindQuestion(thisQuestion)
-   this._showQuestion(besideQuestion)
+   this.Questionselector._showQuestion(besideQuestion)
    QuestionselectorController._turnNextQuestionSelectorOn()
   }
  }
@@ -286,18 +290,9 @@ export default class runTestingPageClass extends HtmlElementClass {
   const beforeThisQuestion = this._getBeforeThisQuestion()
 
   this._hindQuestion(thisQuestion)
-  this._showQuestion(beforeThisQuestion)
-  QuestionselectorController._turnPreviousQuestionSelectorOn()
- }
+  this.Questionselector._showQuestion(beforeThisQuestion)
 
- _activeQuestion(recentquestion) {
-  const recentQuestion = document.querySelector(
-   "[data-index='" + recentquestion + "']"
-  )
-  const recentQuestionParent = recentQuestion.parentElement
-  recentQuestion.classList.remove('none')
-  recentQuestion.classList.add('active')
-  recentQuestionParent.classList.remove('none')
+  QuestionselectorController._turnPreviousQuestionSelectorOn()
  }
 
  _hindQuestion(thisQuestion) {
@@ -310,15 +305,36 @@ export default class runTestingPageClass extends HtmlElementClass {
   // SHOW NEXT QUESTION
   besideQuestion.classList.add('active')
   besideQuestion.classList.remove('none')
+  // this._assignQuestionStartedTime()
  }
 
  _validateFirstQuestion() {
-  const beforeThisQuestion = this._getBeforeThisQuestion()
-
-  if (beforeThisQuestion !== null) {
-   this.backButton.button.disabled =
-    beforeThisQuestion.dataset.index == 1 ? true : false
+  if (this._isBeforeThisQuestionFirstIndex()) {
+   this.backButton.button.disabled = true
   }
+ }
+
+ _setUpDisableButton() {
+  if (this._isThisQuestionFirstIndex()) {
+   this.backButton.button.disabled = true
+  }
+ }
+
+ _setUpNextButton() {
+  const totalAvailableQuestion = this._getTotalQuestionNumber()
+  if (this._getRealTimeNumberOfAnswer() == totalAvailableQuestion) {
+   this._changeSuccessText()
+  }
+ }
+ //  call when setup
+ _isThisQuestionFirstIndex() {
+  const thisQuestion = this._getThisQuestion().dataset.index
+  return Number(thisQuestion) === 1
+ }
+
+ _isBeforeThisQuestionFirstIndex() {
+  const beforeThisQuestionIndex = this._getBeforeThisQuestion().dataset.index
+  return Number(beforeThisQuestionIndex) === 1
  }
 
  _validateLastQuesiton() {
@@ -353,7 +369,7 @@ export default class runTestingPageClass extends HtmlElementClass {
  _startTimer(display) {
   this.countDownInterval = setInterval(() => {
    display.textContent = `${this.timeLeft._getHourIncludeZero()}:${this.timeLeft._getMinutesIncludeZero()}:${this.timeLeft._getSecondIncludeZero()}`
-  //  localStorage.setItem('timeleft', this.timeLeft.duration)
+   //  localStorage.setItem('timeleft', this.timeLeft.duration)
    this._updateUserCountDownTime(this.timeLeft._getSecondIncludeZero())
 
    this.timeLeft._reducingTimeLeft()
@@ -450,6 +466,8 @@ export default class runTestingPageClass extends HtmlElementClass {
     })
    })
   })
+
+  console.log(this.answerObject)
  }
 
  _getEachSkillsNumberOfTotalQuestion(testingobject, skillid) {
@@ -459,7 +477,7 @@ export default class runTestingPageClass extends HtmlElementClass {
  _getTestingRequestData() {
   const queryString = window.location.search.split('?')[1]
   const testingRequestData = JSON.parse(decodeURIComponent(queryString))
-
+  console.log(testingRequestData)
   return testingRequestData
  }
 
@@ -472,17 +490,13 @@ export default class runTestingPageClass extends HtmlElementClass {
   })
  }
 
- _setupTotalQuestion() {
-  // this.answerObject.totalquestion = this._getTotalQuestionNumber()
- }
-
  _setExistedItemToAnswerObject() {
   this.availableQuestion.then((data) => {
    data.results.map((question) => {
     this._pushExistAnswerToAnswerObject(question)
    })
   })
-  console.log(this.answerObject)
+  // console.log(this.answerObject)
  }
 
  _pushExistAnswerToAnswerObject(question) {
@@ -535,18 +549,19 @@ export default class runTestingPageClass extends HtmlElementClass {
 
  _alertTimeOutModal() {
   const timeOutTime = new this.confirmModal({
+   trueButtonText: 'ส่งคำตอบ',
    headerText: 'การแจ้งเตือน',
-   ModalContent: 'โอ้ดูเหมือนว่า หมดเวลาการทดสอบแล้ว',
+   ModalContent: 'หมดเวลาการทดสอบแล้ว',
    backdrop: true,
   })
   timeOutTime.falseButton.remove()
   timeOutTime.body.classList = `grey lighten-4 modal-body rounded p-2 m-3 text-center`
-  const testest = this._parserHtmlTag(
-   `<i style="font-size: 5rem;" class="h1 fas fa-exclamation-circle text-warning"></i>`
-  )
+  // const testest = this._parserHtmlTag(
+  //  `<i style="font-size: 5rem;" class="h1 fas fa-exclamation-circle text-warning"></i>`
+  // )
 
-  timeOutTime.body.childNodes[0].classList.add('h4', 'text-dark', 'mt-2')
-  timeOutTime.body.insertBefore(testest, timeOutTime.body.childNodes[0])
+  // timeOutTime.body.childNodes[0].classList.add('h4', 'text-dark', 'mt-2')
+  // timeOutTime.body.insertBefore(testest, timeOutTime.body.childNodes[0])
 
   timeOutTime.trueButton.parentNode.classList.add('m-auto')
   timeOutTime.trueButton.addEventListener('click', () => {
@@ -574,6 +589,11 @@ export default class runTestingPageClass extends HtmlElementClass {
  _getThisChuck() {
   const thisChuck = this._getThisQuestion().parentElement
   return thisChuck
+ }
+
+ _getThisQuestionCategory() {
+  const thisQuestion = this._getThisQuestion()
+  return Number(thisQuestion.dataset.category)
  }
 
  _getBeforeThisQuestion() {
@@ -609,6 +629,7 @@ export default class runTestingPageClass extends HtmlElementClass {
  }
 
  _changeSuccessText() {
+  // console.log(this.nextButton.button)
   this.nextButton.button.textContent = 'จบการทดสอบ'
  }
 

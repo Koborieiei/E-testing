@@ -69,8 +69,8 @@ export default class AgreementModal {
   )
 
   const p = document.createElement('p')
-  p.classList.add('font-weight-light')
-  p.textContent = this.modalContent
+  p.classList.add('font-weight-light', 'text-dark')
+  p.innerText = this.modalContent
   this.body.appendChild(p)
 
   content.appendChild(this.body)
@@ -91,7 +91,7 @@ export default class AgreementModal {
   })
   footer.appendChild(this.falseButton)
 
-  this.trueButton = document.createElement('button')
+  this.trueButton = document.createElement('a')
 
   this.trueButton.classList.add('btn', 'btn-primary', 'btn-lg', 'text-white')
   this.trueButton.textContent = this.trueButtonText

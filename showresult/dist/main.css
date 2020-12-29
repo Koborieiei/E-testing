@@ -66,6 +66,42 @@ a.bg-primary:focus, a.bg-primary:hover, button.bg-primary:focus, button.bg-prima
     display: none;
 }
 
+.btn-secondary {
+  color: #fff;
+  background-color: #D1D3E2 !important;
+  border-color: #19276B
+}
+
+.btn-secondary:hover {
+  color: #fff;
+  background-color: #b8bcda;
+  border-color: #19276B
+}
+
+.btn-secondary.focus, .btn-secondary:focus {
+  box-shadow: 0 0 0 .2rem rgba(39, 50, 83, 0.5)
+}
+
+.btn-secondary.disabled, .btn-secondary:disabled {
+  color: #fff;
+  background-color: #424a6e;
+  border-color: #424a6e
+}
+
+.btn-secondary:not(:disabled):not(.disabled).active, .btn-secondary:not(:disabled):not(.disabled):active, .show>.btn-primary.dropdown-toggle {
+  color: #fff;
+  background-color: #19276B;
+  border-color: #19276B
+}
+
+.btn-secondary:not(:disabled):not(.disabled).active:focus, .btn-secondary:not(:disabled):not(.disabled):active:focus, .show>.btn-primary.dropdown-toggle:focus {
+  box-shadow: 0 0 0 .2rem rgba(39, 50, 83, 0.5)
+}
+
+.none {
+  display: none;
+}
+
 .active {
     display: block;
 }

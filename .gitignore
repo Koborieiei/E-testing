@@ -25,6 +25,7 @@ pnpm-debug.log*
 *.sln
 *.sw?
 *.php
+*.json
 *.workspace
 
 git pull origin master --rebase
