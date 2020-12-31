@@ -22,13 +22,7 @@ export default class Testingitem {
   this.answeredId = answeredId || undefined
   this.questionId = questionId || undefined
   this.category = parseInt(category) || undefined
-  // this.prefixSetup = 'ENG'
-  // this.logs = {
-  //  service: 'updateresult',
-  //  recentquestion: null,
-  //  timeleft: null,
-  //  testingid: this.totalAnswers.testingid,
-  // }
+
   this.choiceid = null
 
   // SET MAIN ELEMENT
@@ -72,21 +66,6 @@ export default class Testingitem {
   this.mainBody.appendChild(headerContainer)
  }
 
- //  _generateEngChoicePrefix(choicenumber) {
- //   switch (this.choiceCounter) {
- //    case 1:
- //     return `A`
- //    case 2:
- //     return `B`
- //    case 3:
- //     return `C`
- //    case 4:
- //     return `E`
- //     break
- //   }
- //  }
-
- //
  _generateChoices(itemChoices) {
   this.itemContainers = document.createElement('div')
   this.itemContainers.classList.add('py-3', 'bg-light', 'd-flex', 'flex-column')
@@ -109,50 +88,18 @@ export default class Testingitem {
   this.mainBody.appendChild(this.itemContainers)
  }
 
- //  _generateThChoicePrefix(choicenumber) {
- //   switch (this.choiceCounter) {
- //    case 1:
- //     return `ก`
- //    case 2:
- //     return `ข`
- //    case 3:
- //     return `ค`
- //    case 4:
- //     return `ง`
- //     break
-
- //    default:
- //     return ''
- //     break
- //   }
- //  }
-
- //  _checkPrefix() {
- //   if (this.prefixSetup == 'ENG') {
- //    return this._generateEngChoicePrefix()
- //   }
-
- //   if (this.prefixSetup == 'TH') {
- //    return this._generateThChoicePrefix()
- //   }
- //  }
-
- //  _preventChoiceCounter() {
- //   if (this.choiceCounter == 4) {
- //    this.choiceCounter = 0
- //   }
- //  }
-
  _setupRadioLabelEventListener(radioLabel) {
   radioLabel.addEventListener('click', () => {
    if (this._getAnswerCatagory()) {
+    // localStorage.setItem('duration', 0)
+    // the problem is update won't be able to find duration
     this.choiceid = parseInt(radioLabel.dataset.choices)
     this._checkActiveLabel()
     this._appendAnswerToJson()
+    this._updateUserLogToServer()
 
     radioLabel.classList.add('active')
 
-    this._updateUserLogToServer()
     const activebutton = document.querySelector('div.now-question')
     activebutton.dataset.status = `selected-question`
    }
@@ -165,11 +112,7 @@ export default class Testingitem {
 
  _pushDataToAnswerJson() {
   this._updateAnswerCounter()
-
-  // console.log(localStorage.getItem('duration'))
-
   this.totalAnswers.recentquestion = this.questionNumber
-
   this._getAnswerCatagory().answers.push({
    choiceid: this.choiceid,
    questionid: parseInt(this.questionId),
@@ -177,7 +120,7 @@ export default class Testingitem {
    duration: this._getDuration(),
   })
 
-  console.log(this.totalAnswers)
+  // console.log(this.totalAnswers)
  }
 
  _appendAnswerToJson() {
@@ -195,6 +138,11 @@ export default class Testingitem {
  }
 
  _getCurrentUserLogJson() {
+  const thisAnswerObject = this._getAnswerCatagory().answers[
+   this._getIndexOfAnswer()
+  ]
+
+  console.log(localStorage.getItem('duration'))
   return {
    service: 'updateresult',
    recentquestion: this._getRecentQuestion(),
@@ -203,7 +151,7 @@ export default class Testingitem {
    questionid: parseInt(this.questionId),
    correct_answerid: this.correctAnswer,
    choiceid: this.choiceid,
-   duration: this._getDuration(),
+   duration: thisAnswerObject.duration,
   }
 
   // console.log('Req total update answer', this.logs)
@@ -219,6 +167,7 @@ export default class Testingitem {
 
  async _updateUserLogToServer() {
   new Apiservice()._reqToUpdateUserLog(this._getCurrentUserLogJson())
+  // console.log(this._getAnswerCatagory().answers[this._getIndexOfAnswer()])
  }
 
  _checkActiveLabel() {
@@ -286,12 +235,17 @@ export default class Testingitem {
 
  _changeAnsweredQuestion() {
   if (this._getAnswerCatagory()) {
+   //  const index = this._getIndexOfAnswer()
    const recentObjectOfAnswer = this._getAnswerCatagory().answers[
     this._getIndexOfAnswer()
    ]
+   const amout = recentObjectOfAnswer.duration + this._getDuration()
+
+   //  console.log(this._getDuration())
+   //  console.log(this._getAnswerCatagory().answers[index].duration)
 
    recentObjectOfAnswer.choiceid = this.choiceid
-   recentObjectOfAnswer.duration = this._getDuration()
+   recentObjectOfAnswer.duration = amout
   }
  }
 

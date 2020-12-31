@@ -187,11 +187,11 @@ export default class runTestingPageClass extends HtmlElementClass {
 
  _createQuestion() {
   let recentquestion
+
   this.availableQuestion.then((data) => {
    recentquestion = parseInt(data.testinginfo.recentquestion)
 
    data.results.map((individualQuestion) => {
-    // console.log(individualQuestion.answeredid)
     new TestingItem({
      directionText: individualQuestion.question,
      itemChoices: individualQuestion.answers,
@@ -208,6 +208,8 @@ export default class runTestingPageClass extends HtmlElementClass {
   })
  }
 
+ //  dom controller
+
  _setNextButtonFunction() {
   this.nextButton.button.addEventListener('click', () => {
    this._finishTheTest()
@@ -215,16 +217,17 @@ export default class runTestingPageClass extends HtmlElementClass {
    this._turnToNextQuestion()
   })
  }
-
+ // logic
  _finishTheTest() {
   if (this._isTestProved()) {
    this._showTestConfirmModal()
   }
  }
 
+ //  dom controller
  _switchSuccessTextBack() {
   const besideQuestion = this._getBesideQuestion()
-
+  // logic return boolean
   if (
    besideQuestion !== null &&
    this._isThisLastQuestion(besideQuestion) &&
@@ -234,6 +237,7 @@ export default class runTestingPageClass extends HtmlElementClass {
   }
  }
 
+ //  action
  _showTestConfirmModal() {
   const confirmModal = new this.confirmModal({
    headerText: 'ยืนยัน',
@@ -246,6 +250,7 @@ export default class runTestingPageClass extends HtmlElementClass {
   })
  }
 
+ // setup function
  _setBackButtonFunction() {
   this._setUpDisableButton()
   this._setUpNextButton()
@@ -256,6 +261,7 @@ export default class runTestingPageClass extends HtmlElementClass {
   })
  }
 
+ //  Logic
  _isTestProved() {
   const numberOfTotalQuestion = this._getTotalQuestionNumber()
   const numberOfAnswer = this._getRealTimeNumberOfAnswer()
@@ -266,6 +272,8 @@ export default class runTestingPageClass extends HtmlElementClass {
   }
  }
 
+ //  this function is validate lastquestion
+ //  logic
  _isThisLastQuestion(question) {
   const thisQuestionIndex = question.dataset.index
   const numberOfTotalQuestion = this._getTotalQuestionNumber()
@@ -277,6 +285,8 @@ export default class runTestingPageClass extends HtmlElementClass {
  _turnToNextQuestion() {
   const thisQuestion = this._getThisQuestion()
   const besideQuestion = this._getBesideQuestion()
+
+  // logic
   if (besideQuestion) {
    this._switchDisableButton()
    this._hindQuestion(thisQuestion)
@@ -285,6 +295,7 @@ export default class runTestingPageClass extends HtmlElementClass {
   }
  }
 
+ //  action
  _returnToPreviousQuestion() {
   const thisQuestion = this._getThisQuestion()
   const beforeThisQuestion = this._getBeforeThisQuestion()
@@ -295,25 +306,14 @@ export default class runTestingPageClass extends HtmlElementClass {
   QuestionselectorController._turnPreviousQuestionSelectorOn()
  }
 
- _hindQuestion(thisQuestion) {
-  // BIND THIS QUESTION
-  thisQuestion.classList.remove('active')
-  thisQuestion.classList.add('none')
- }
-
- _showQuestion(besideQuestion) {
-  // SHOW NEXT QUESTION
-  besideQuestion.classList.add('active')
-  besideQuestion.classList.remove('none')
-  // this._assignQuestionStartedTime()
- }
-
+ //  logic
  _validateFirstQuestion() {
   if (this._isBeforeThisQuestionFirstIndex()) {
    this.backButton.button.disabled = true
   }
  }
 
+ //  similar to the above
  _setUpDisableButton() {
   if (this._isThisQuestionFirstIndex()) {
    this.backButton.button.disabled = true
@@ -322,21 +322,27 @@ export default class runTestingPageClass extends HtmlElementClass {
 
  _setUpNextButton() {
   const totalAvailableQuestion = this._getTotalQuestionNumber()
+  // logic
   if (this._getRealTimeNumberOfAnswer() == totalAvailableQuestion) {
    this._changeSuccessText()
   }
  }
- //  call when setup
+
+ //  logic
  _isThisQuestionFirstIndex() {
   const thisQuestion = this._getThisQuestion().dataset.index
   return Number(thisQuestion) === 1
  }
 
+ //  this one is similar to above the basecase is to prove index equal 1
+ //  logic
  _isBeforeThisQuestionFirstIndex() {
   const beforeThisQuestionIndex = this._getBeforeThisQuestion().dataset.index
   return Number(beforeThisQuestionIndex) === 1
  }
 
+ //  logic reverse next button text back to ถัดไป
+ //  this function equals false of is the last question
  _validateLastQuesiton() {
   const beforeThisQuestionIndex = this._getBeforeThisQuestion().dataset.index
   const numberOfTotalQuestion = this._getTotalQuestionNumber()
@@ -345,6 +351,7 @@ export default class runTestingPageClass extends HtmlElementClass {
   }
  }
 
+ //  mutation function
  _bindCounterNumber() {
   const counterNumberNode = this.counterNumber
   const observerOptions = {
@@ -354,18 +361,20 @@ export default class runTestingPageClass extends HtmlElementClass {
   }
   this._callOutCounterObserver().observe(counterNumberNode, observerOptions)
  }
-
+ //  mutation function
  _callOutCounterObserver() {
   const totalAvailableQuestion = this._getTotalQuestionNumber()
   return new MutationObserver(() => {
    this.testingProgressBar._updateProgressBarPerTime()
 
+   //  logic change text to success use is all answer equal number of total question
    if (this._getRealTimeNumberOfAnswer() == totalAvailableQuestion) {
     this._changeSuccessText()
    }
   })
  }
 
+ //  setup timer controller
  _startTimer(display) {
   this.countDownInterval = setInterval(() => {
    display.textContent = `${this.timeLeft._getHourIncludeZero()}:${this.timeLeft._getMinutesIncludeZero()}:${this.timeLeft._getSecondIncludeZero()}`
@@ -377,6 +386,7 @@ export default class runTestingPageClass extends HtmlElementClass {
   }, 1000)
  }
 
+ // validate time up
  _isTimeUp() {
   if (this.timeLeft.duration < 0) {
    this._alertTimeOutModal()
@@ -385,6 +395,7 @@ export default class runTestingPageClass extends HtmlElementClass {
   }
  }
 
+ // function update every seconds
  _updateUserCountDownTime(seconds) {
   if (seconds < 1) {
    this._setAnswerObjectCountDownTime()
@@ -392,12 +403,13 @@ export default class runTestingPageClass extends HtmlElementClass {
   }
  }
 
+ //  logic
  _IsRequestSuccess() {
   new Apiservice()
    ._reqToSendTotalResult(this.answerObject)
    .then((resp) => {
     this._redirectToResultPage(resp)
-    // console.log(resp)
+    console.log(resp)
     this._validateSuccessRequest(resp)
    })
    .catch((err) => {
@@ -406,33 +418,41 @@ export default class runTestingPageClass extends HtmlElementClass {
    })
  }
 
+ //  action result
  _redirectToResultPage(data) {
+  //  unload event listener
   this._removeBeforeUnLoadEventListener()
+
+  // localstorage
   localStorage.setItem(
    'progressbarvalue',
    this.testingProgressBar.currentValueOfProgressBar
   )
 
+  // function uri encode
   const jsonEncodeToUri = encodeURIComponent(JSON.stringify(data))
   setTimeout(() => {
    window.location.assign(`../showresult?${jsonEncodeToUri}`)
   }, 1000)
  }
+ // before unload handle
 
  _confirmBeforeUnload(e) {
   var dialogText = 'Dialog text here'
   e.returnValue = dialogText
   return dialogText
  }
-
+ // before unload handle
  _removeBeforeUnLoadEventListener() {
   window.removeEventListener('beforeunload', this._confirmBeforeUnload)
  }
+ // before unload handle
 
  _addWindowBeforeUnloadEvent() {
   window.addEventListener('beforeunload', this._confirmBeforeUnload)
  }
 
+ //  api request
  _updateUserLog() {
   this.userTimeleftLogUpdate.timeleft = this._getTimeLeft()
   // console.log(this._getTimeLeft())
@@ -453,6 +473,7 @@ export default class runTestingPageClass extends HtmlElementClass {
   )
  }
 
+ //  data object function
  _setAnswerObjectSkillId() {
   this.availableQuestion.then((testingObject) => {
    this._getTestingRequestData().skill_id.map((skillid) => {
@@ -470,16 +491,20 @@ export default class runTestingPageClass extends HtmlElementClass {
   console.log(this.answerObject)
  }
 
+ //  data object function
+
  _getEachSkillsNumberOfTotalQuestion(testingobject, skillid) {
   return testingobject.results.filter((item) => item.category == skillid).length
  }
 
+ //  apiservice
  _getTestingRequestData() {
   const queryString = window.location.search.split('?')[1]
   const testingRequestData = JSON.parse(decodeURIComponent(queryString))
-  console.log(testingRequestData)
   return testingRequestData
  }
+
+ //  data object function
 
  _setUpTestingId() {
   this.availableQuestion.then((data) => {
@@ -489,6 +514,7 @@ export default class runTestingPageClass extends HtmlElementClass {
    this.testName = data.testinginfo.type
   })
  }
+ //  data object function
 
  _setExistedItemToAnswerObject() {
   this.availableQuestion.then((data) => {
@@ -496,9 +522,9 @@ export default class runTestingPageClass extends HtmlElementClass {
     this._pushExistAnswerToAnswerObject(question)
    })
   })
-  // console.log(this.answerObject)
  }
 
+ //  data object function
  _pushExistAnswerToAnswerObject(question) {
   if (question.answeredid != null) {
    this.countTotalExistedAnswer++
@@ -510,10 +536,12 @@ export default class runTestingPageClass extends HtmlElementClass {
     questionid: parseInt(question.question_id),
     correct_answerid: question.correct_answerid,
     questionindex: parseInt(question.index),
+    duration: 0,
    })
   }
  }
 
+ //  data object function
  _getIndexOfAnswerCategory(question) {
   const numberOfIndex = this.answerObject.items.findIndex(
    (answer) => answer.category == parseInt(question.category)
@@ -555,7 +583,7 @@ export default class runTestingPageClass extends HtmlElementClass {
    backdrop: true,
   })
   timeOutTime.falseButton.remove()
-  timeOutTime.body.classList = `grey lighten-4 modal-body rounded p-2 m-3 text-center`
+  timeOutTime.body.classList = `grey lighten-4 modal-body rounded mt-4 text-center`
   // const testest = this._parserHtmlTag(
   //  `<i style="font-size: 5rem;" class="h1 fas fa-exclamation-circle text-warning"></i>`
   // )
@@ -569,6 +597,22 @@ export default class runTestingPageClass extends HtmlElementClass {
   })
  }
 
+ //  dom controller
+ _hindQuestion(thisQuestion) {
+  // BIND THIS QUESTION
+  thisQuestion.classList.remove('active')
+  thisQuestion.classList.add('none')
+ }
+
+ //  dom controller
+ _showQuestion(besideQuestion) {
+  // SHOW NEXT QUESTION
+  besideQuestion.classList.add('active')
+  besideQuestion.classList.remove('none')
+  // this._assignQuestionStartedTime()
+ }
+
+ //  dom controller
  _getNumberOfExistedAnswered() {
   return this.countTotalExistedAnswer
  }

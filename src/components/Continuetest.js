@@ -38,7 +38,7 @@ class ContinueTest {
  _initTestingHeader() {
   this._parentAppendChild()
   this._startTimer()
-  this._setUpProgressBar()
+    this._setUpProgressBar()
   this._initToopTipFunction()
  }
 

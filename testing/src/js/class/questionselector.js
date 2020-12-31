@@ -22,6 +22,8 @@ export default class Questionselector {
   this.selectorParent = undefined
   this.assignQuestionTime = undefined
 
+  this.DurationTimer = 0
+  this.storedTime = 0
   this._generateSelector()
  }
 
@@ -204,18 +206,25 @@ export default class Questionselector {
   recentQuestionParent.classList.remove('none')
   this._assignQuestionStartedTime()
  }
+
+ _clearInterval() {
+  //   this.storedTime += this.DurationTimer
+  //   console.log(this.storedTime)
+  //   console.log(this.DurationTimer)
+  clearInterval(this.assignQuestionTime)
+ }
+
  _assignQuestionStartedTime() {
-  //  console.log(assignQuestionTime)
-  //  if (assignQuestionTime) {
-  //   _clearInterval(assignQuestionTime)
-  //  }
   this._clearInterval(this.assignQuestionTime)
-  let DurationTimer = 0
-  localStorage.setItem('duration', DurationTimer)
+  this.DurationTimer = 0
+  localStorage.setItem('duration', this.DurationTimer)
+
   this.assignQuestionTime = setInterval(() => {
-   DurationTimer++
-   localStorage.setItem('duration', DurationTimer)
-   console.log(localStorage.getItem('duration'))
+   this.DurationTimer++
+   localStorage.setItem('duration', this.DurationTimer)
+//    console.log(localStorage.getItem('duration'))
+
+   //    console.log(this.storedTime)
   }, 1000)
  }
 }

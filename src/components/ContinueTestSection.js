@@ -1,21 +1,21 @@
 import DomController, * as DomControllerFunction from '../utils/Domcontroller'
 import ContinueTest from './Continuetest'
 
-export default class ContinueTestSection extends DomController {
- constructor({ existedTestData }) {
-  super()
-
+export default class ContinueTestSection {
+ constructor(parent, { existedTestData }) {
+  this.parent = parent || undefined
   this.continueTestComponent = undefined
   this.existedTestData = existedTestData || undefined
 
   this.continueTestingSection = DomControllerFunction.parserHtmlTag(
    continueTestingSectionElement()
   )
+
   this.createContinueTestSection()
  }
 
  createContinueTestSection() {
-  this._appendToBody(this.continueTestingSection)
+  this.parent.appendChild(this.continueTestingSection)
   this.generateSelectedSkillCardParent()
  }
 
@@ -25,7 +25,6 @@ export default class ContinueTestSection extends DomController {
   })
  }
  _generateContinueComponent(item) {
-
   this.continueTestComponent = new ContinueTest({
    containerParent: this.continueTestingSection,
    duration: item.timeleft,
@@ -43,7 +42,7 @@ export default class ContinueTestSection extends DomController {
 }
 
 const continueTestingSectionElement = () => {
- return `<section id='existingTest' class="mt-5 ">
+ return `<section id='existingTest' class="mt-5">
     <div class="headerWrapper mb-3">
     ${DomControllerFunction._skillHeaderSectionText('บททดสอบที่พักไว้ 🔥')}
     </div>

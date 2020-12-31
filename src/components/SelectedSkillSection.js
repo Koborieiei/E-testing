@@ -2,9 +2,9 @@ import DomController, * as DomControlFunction from '../utils/Domcontroller'
 import SkillCard from './Skillcard.js'
 import Timer from '../../js/class/Timer'
 
-export default class SelectedSkillSection extends DomController {
+export default class SelectedSkillSection {
  constructor({ selectedSkillsData }) {
-  super()
+  //   this.parent = parent || undefined
   this.selectedSkillsData = selectedSkillsData || undefined
   this.NUMBER_OF_LOADED_ITEM = 2
   this.MAX_ITEM_OF_SKILLCARD = 3
@@ -18,17 +18,18 @@ export default class SelectedSkillSection extends DomController {
    '#selectedSkillsParent'
   )
 
+  //   Execution
   this._createSelectedSkillSection()
  }
 
  _createSelectedSkillSection() {
   try {
-   this.selectedSkillSectionDiv.appendChild(this.selectedSkillParentDiv)
+   this._isSelectedSkillsDataEmpty()
    this.generateSelectedSkillCardParent()
    this.generateButtonElement()
-   this._appendToBody(this.getSelectedSkillSectionElement())
   } catch (error) {
    console.log(error)
+   this._displayErrorElement()
   }
  }
 
@@ -37,6 +38,7 @@ export default class SelectedSkillSection extends DomController {
    const LoadMoreButtonElement = DomControlFunction.parserHtmlTag(
     LoadMoreButtonElementDiv()
    )
+   console.log()
    this.selectedSkillSectionDiv.appendChild(LoadMoreButtonElement)
    this._setupLoadMoreButton()
   }
@@ -95,12 +97,25 @@ export default class SelectedSkillSection extends DomController {
   }
  }
 
+ _displayErrorElement() {
+  this.selectedSkillParentDiv.appendChild(
+   DomControlFunction.parserHtmlTag(EmptySkillAlertElementDiv())
+  )
+  this._appendToBody(this.getSelectedSkillSectionElement())
+ }
+
  generateErrorHandle() {
   const EmptySkillAlertElementDiv = EmptySkillAlertElementDiv()
  }
 
  getSelectedSkillSectionElement() {
   return this.selectedSkillSectionDiv
+ }
+
+ _isSelectedSkillsDataEmpty() {
+  if (!this.selectedSkillsData) {
+   throw 'Have no data'
+  }
  }
 }
 
@@ -113,10 +128,12 @@ const generateSkillCardTerm = (choicenumber, duration) => {
 }
 
 const SelectedSkillSectionDiv = () => {
- return `<section class="my-5 d-flex flex-column justify-content-center">
+ return `
+ <section class="my-5 d-flex flex-column justify-content-center">
     <h5 class="text-dark">ทักษะที่เลือกไว้</h5>
     <div id="selectedSkillsParent" class="row m-0"></div>
-</section>`
+</section>
+`
 }
 
 const LoadMoreButtonElementDiv = () => {
@@ -128,14 +145,17 @@ const LoadMoreButtonElementDiv = () => {
 }
 
 const EmptySkillAlertElementDiv = () => {
- return `<div class="m-auto row pt-4">
- <div class="col-md-12 d-flex flex-row text-left">
-    <div class="error-image>
-    <img></img>
+ return `<div class="col-12 m-auto row  pt-4">
+ <div class="col-12 d-flex flex-row text-left">
+    <div class="col-5">
+    <div class="error-image" style="background: url('dist/src/img/undraw_empty_xct9.svg'); background-size: cover;
+    background-position: center;">
     </div>
-    <div class="error-template">
-   <h2>ขออภัย..</h2>
-   <h3>ขณะนี้ไม่พบทักษะที่คุณเลือก</h3>
+    </div>
+    
+    <div class="error-template col-7">
+   <h2 class="text-dark">ขออภัย..</h2>
+   <h3 class="text-dark error-details">ขณะนี้ไม่พบทักษะที่คุณเลือก</h3>
    <div class="error-details">กรุณาเลือกทักษะก่อนเริ่มทำแบบทดสอบ</div>
    <div class="mt-3 error-actions">
         <a href="../profile" class="btn btn-primary btn-sm">

@@ -46,7 +46,7 @@ export default class Apiservice {
   const resp = await fetch(
    './ajax/getObjectdata.php?',
    //   './APIlocaltest/getObjectdata.php?',
-   //  'https://www.edbot.com/backbone/pages/newetesting/APIlocaltest/getObjectdata.php?',
+   // 'https://www.edbot.com/backbone/pages/newetesting/APIlocaltest/getObjectdata.php?',
 
    {
     method: 'POST',

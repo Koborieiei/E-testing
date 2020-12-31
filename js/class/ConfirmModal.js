@@ -94,7 +94,9 @@ export default class AgreementModal {
   this.trueButton = document.createElement('a')
 
   this.trueButton.classList.add('btn', 'btn-primary', 'btn-lg', 'text-white')
+  this.trueButton.style.setProperty('cursor', 'pointer')
   this.trueButton.textContent = this.trueButtonText
+  
   footer.appendChild(this.trueButton)
   content.appendChild(footer)
  }

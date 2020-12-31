@@ -29,7 +29,8 @@ export default class runResultPage extends HtmlElementClass {
    this._setPageDisplaySkills()
 
    this._setPageButtonContainer()
-   //    this._clearAllLocalStorage()
+
+   console.log(this)
   } catch (error) {
    console.log(error)
    this._appAppendChild(this._generateDisplayErrorHandle())
@@ -76,7 +77,7 @@ export default class runResultPage extends HtmlElementClass {
   })
 
   timeLeftDuration._getMinutesIncludeZero()
-  this._getTimerElement().textContent = `${timeLeftDuration.string}`
+  this._getTimerElement().textContent = `${timeLeftDuration._getTimeStringWithOutThai()}`
  }
 
  _setTotalAnswerText() {
@@ -100,6 +101,7 @@ export default class runResultPage extends HtmlElementClass {
  }
 
  _getTimeLeft() {
+  console.log(this.testingResult.result.timeleft)
   return this.testingResult.result.timeleft
  }
 
@@ -150,7 +152,7 @@ export default class runResultPage extends HtmlElementClass {
  _storeTestingResult() {
   const queryString = window.location.search.split('?')[1]
   this.testingResult = JSON.parse(decodeURIComponent(queryString))
-  //   console.log(JSON.parse(decodeURIComponent(queryString)))
+  console.log(JSON.parse(decodeURIComponent(queryString)))
  }
 
  _setupRetestButton() {

@@ -56,6 +56,7 @@ export default class DataTableSection {
    }
   })
  }
+ 
  _displayNotFoundSearchResult() {
   const table = _getTableElement()
   table.querySelector('.list').appendChild(notFoundSearchResult())

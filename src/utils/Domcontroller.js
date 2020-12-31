@@ -21,3 +21,8 @@ export const parserHtmlTag = (htmlTag) => {
 export const _skillHeaderSectionText = (text) => {
  return `<h5 class="text-dark">${text}</h5>`
 }
+
+
+export const appendToParent = (parent,htmlelement) => {
+parent.appendChild(htmlelement)
+}

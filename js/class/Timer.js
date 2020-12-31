@@ -1,6 +1,6 @@
 export default class Timer {
  constructor({ duration }) {
-  this.duration = duration === 0 ? null : duration
+  this.duration = duration
   this.hour = undefined
   this.minutes = undefined
   this.seconds = undefined
