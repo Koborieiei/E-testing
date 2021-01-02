@@ -4,7 +4,7 @@
     1. Go the folder where project is kept
     2. Run `npm init` on your command-line
 ## Development
-    1. Go the folder forexample testing
+    1. Go the folder for example testing
     2. Run `webpack -w`
 ## Deployment
     1. Copy all src files in dist folder
