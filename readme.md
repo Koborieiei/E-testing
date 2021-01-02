@@ -7,7 +7,7 @@
     1. Go the folder for example testing
     2. Run `webpack -w`
 ## Deployment
-    1. Copy all src files in dist folder
+    1. Copy all files in dist folder
     2. Move to your server ftp
 
 Done :-D
