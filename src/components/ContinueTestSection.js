@@ -1,4 +1,4 @@
-import DomController, * as DomControllerFunction from '../utils/Domcontroller'
+import * as DomControllerFunction from '../../utils/DomController'
 import ContinueTest from './Continuetest'
 
 export default class ContinueTestSection {

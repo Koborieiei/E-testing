@@ -1,6 +1,6 @@
-import DomController, * as DomControlFunction from '../utils/Domcontroller'
+import * as DomControlFunction from '../../utils/DomController'
 import SkillCard from './Skillcard.js'
-import Timer from '../../js/class/Timer'
+import Timer from '../../utils/Timer'
 
 export default class SelectedSkillSection {
  constructor({ selectedSkillsData }) {
@@ -122,7 +122,7 @@ export default class SelectedSkillSection {
 const generateSkillCardTerm = (choicenumber, duration) => {
  const durationInString = new Timer({
   duration: duration,
- })._timeToStringWithThai()
+ }).getTimeToStringWithThai
 
  return `${choicenumber} ข้อ / ${durationInString}`
 }

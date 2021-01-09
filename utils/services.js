@@ -1,6 +1,5 @@
 export default class Apiservice {
  constructor() {
-  //   this.data = data || undefined
   this.url = null
  }
 
@@ -23,7 +22,6 @@ export default class Apiservice {
   const formData = this._appendObjectToFormData(data)
   const resp = await fetch(
    '../ajax/result.php',
-   //    '../ajax/resulttest.php',
    //    'https://www.edbot.com/backbone/pages/newetesting/APIlocaltest/resulttest.php?',
 
    {
@@ -42,11 +40,11 @@ export default class Apiservice {
  }
 
  async _reqToGetUserSelectedSkills() {
-  //   this._displayLoadingScreen()
+  this._displayLoadingScreen()
   const resp = await fetch(
    './ajax/getObjectdata.php?',
    //   './APIlocaltest/getObjectdata.php?',
-   // 'https://www.edbot.com/backbone/pages/newetesting/APIlocaltest/getObjectdata.php?',
+   //    'https://www.edbot.com/backbone/pages/newetesting/APIlocaltest/getObjectdata.php?',
 
    {
     method: 'POST',
@@ -62,16 +60,23 @@ export default class Apiservice {
   return responseData
  }
 
- _reqToUpdateUserTime(data) {
+ async _reqToUpdateUserTime(timeleft, testingid) {
   const formData = new FormData()
-  formData.append('service', data.service)
-  formData.append('timeleft', data.timeleft)
-  formData.append('testingid', data.testingid)
+  formData.append('service', 'updatetime')
+  formData.append('timeleft', timeleft)
+  formData.append('testingid', testingid)
 
-  return fetch('./ajax/logtesting.php', {
+  const resp = await fetch('./ajax/logtesting.php', {
    method: 'POST',
    body: formData,
   })
+
+  if (!resp.ok) {
+   throw 'Something Went Wrong'
+  }
+
+  const responseData = await resp.json()
+  return responseData
  }
 
  async _reqToUpdateUserLog(data) {
@@ -132,3 +137,12 @@ export default class Apiservice {
   document.querySelector('#loading').classList.add('none')
  }
 }
+
+// export const _IsRequestSuccess = async (answerObject) => {
+//  //   console.log(resp)
+//  //   modalAlert.showModalSuccess()
+//  return new Apiservice()._reqToSendTotalResult(answerObject)
+
+//  //   modalAlert.throwNewErrorModal()
+//  //   console.log(error)
+// }

@@ -1,5 +1,5 @@
-import Apiservice from './services'
-import Choice from './choice.class'
+import Apiservice from '../../../utils/services'
+import Choice from './Choice'
 
 export default class Testingitem {
  constructor({
@@ -112,7 +112,9 @@ export default class Testingitem {
 
  _pushDataToAnswerJson() {
   this._updateAnswerCounter()
-  this.totalAnswers.recentquestion = this.questionNumber
+  this.totalAnswers.totalNumberOfAnswer++
+
+  this.totalAnswers.answerObject.recentquestion = this.questionNumber
   this._getAnswerCatagory().answers.push({
    choiceid: this.choiceid,
    questionid: parseInt(this.questionId),
@@ -120,21 +122,22 @@ export default class Testingitem {
    duration: this._getDuration(),
   })
 
-  // console.log(this.totalAnswers)
+  // console.log(this.totalAnswers.answerObject)
  }
 
  _appendAnswerToJson() {
   if (this._getIndexOfAnswer() === -1) {
    this._pushDataToAnswerJson()
-   console.log('Req total push answer', this.totalAnswers)
+   console.log('Req total push answer', this.totalAnswers.answerObject)
   } else {
+   console.log('total answer', this.totalAnswers.answerObject)
    this._changeAnsweredQuestion()
   }
  }
 
  _updateTimeleft() {
   // this.logs.timeleft = this._getTimeRemaining()
-  // this.totalAnswers.timeleft = this._getTimeRemaining()
+  // this.totalAnswers.answerObject.timeleft = this._getTimeRemaining()
  }
 
  _getCurrentUserLogJson() {
@@ -142,12 +145,11 @@ export default class Testingitem {
    this._getIndexOfAnswer()
   ]
 
-  console.log(localStorage.getItem('duration'))
   return {
    service: 'updateresult',
    recentquestion: this._getRecentQuestion(),
    //  timeleft: this._getTimeRemaining(),
-   testingid: this.totalAnswers.testingid,
+   testingid: this.totalAnswers.answerObject.testingid,
    questionid: parseInt(this.questionId),
    correct_answerid: this.correctAnswer,
    choiceid: this.choiceid,
@@ -159,9 +161,9 @@ export default class Testingitem {
 
  _getRecentQuestion() {
   const recentQuestion =
-   this.totalAnswers.recentquestion < this.questionNumber
+   this.totalAnswers.answerObject.recentquestion < this.questionNumber
     ? this.questionNumber
-    : this.totalAnswers.recentquestion
+    : this.totalAnswers.answerObject.recentquestion
   return recentQuestion
  }
 
@@ -199,16 +201,16 @@ export default class Testingitem {
 
  _getAnswerCatagory() {
   try {
-   //  if (!this.totalAnswers.items[this._checkIndexOfCategoryItem()]) {
+   //  if (!this.totalAnswers.answerObject.items[this._checkIndexOfCategoryItem()]) {
    //   throw 'Not found Category'
    //  }
    if (this._checkIndexOfCategoryItem() == -1) {
     throw `${this.category} Categoryid was not found, Please check category inside result object below ⬇️`
    }
-   return this.totalAnswers.items[this._checkIndexOfCategoryItem()]
+   return this.totalAnswers.answerObject.items[this._checkIndexOfCategoryItem()]
   } catch (error) {
    console.warn(error)
-   console.log(this.totalAnswers)
+   console.log(this.totalAnswers.answerObject)
   }
  }
 
@@ -226,7 +228,7 @@ export default class Testingitem {
  }
 
  _checkIndexOfCategoryItem() {
-  const indexOfCategoryItem = this.totalAnswers.items.findIndex(
+  const indexOfCategoryItem = this.totalAnswers.answerObject.items.findIndex(
    (question) => question.category == this.category
   )
 
@@ -250,7 +252,7 @@ export default class Testingitem {
  }
 
  _getTotalNumberOfAnswer() {
-  return this.totalAnswers.items.length
+  return this.totalAnswers.answerObject.items.length
  }
 
  //  _getChoiceId() {
@@ -259,7 +261,7 @@ export default class Testingitem {
  //  }
 
  _setUpLogsRecentQuestion() {
-  // this.logs.recentquestion = this.totalAnswers.recentquestion
+  // this.logs.recentquestion = this.totalAnswers.answerObject.recentquestion
  }
 
  _getCounterNumberElement() {

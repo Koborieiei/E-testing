@@ -1,4 +1,4 @@
-import ConfirmModal from '../../js/class/ConfirmModal'
+import ConfirmModal from '../../utils/ConfirmModal'
 
 export default class SkillCard {
  constructor({ relatedSkill, titleName, term, img, id, parents, testingType }) {

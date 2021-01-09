@@ -1,4 +1,4 @@
-import DomController, * as DomcontrollerFunction from '../utils/Domcontroller'
+import DomController, * as DomcontrollerFunction from '../../utils/DomController'
 import SelectedSkillSection from '../components/SelectedSkillSection'
 import DataTableSection from '../components/DataTableSection'
 import ContinueTestSection from '../components/ContinueTestSection'

@@ -1,7 +1,7 @@
-import * as DomControlFunction from '../utils/Domcontroller'
-import Timer from '../../js/class/Timer'
-import ConfirmModal from '../../js/class/ConfirmModal'
-import ShowProgressBar from '../../js/class/progressbar.class'
+import * as DomControlFunction from '../../utils/DomController'
+import Timer from '../../utils/Timer'
+import ConfirmModal from '../../utils//ConfirmModal'
+import ShowProgressBar from '../../utils/ProgressBar'
 
 class ContinueTest {
  constructor({
@@ -13,15 +13,13 @@ class ContinueTest {
   testingSkill,
   testingType,
  }) {
-  //   this.duration = duration || undefined
+  this.duration = duration || undefined
   this.containerParent = containerParent || undefined
   this.numberOfAnswer = numberOfAnswer || undefined
   this.numberOfQuestion = numberOfQuestion || undefined
   this.testingHeader = testingHeader || undefined
   this.testingSkill = testingSkill || undefined
-  this.existingTestTimer = new Timer({
-   duration: duration,
-  })
+
   this.existingTestCountDownInterval = undefined
 
   this.skillIdContainers = {
@@ -37,8 +35,9 @@ class ContinueTest {
 
  _initTestingHeader() {
   this._parentAppendChild()
+  this._setContinueTestTimer()
   this._startTimer()
-    this._setUpProgressBar()
+  this._setUpProgressBar()
   this._initToopTipFunction()
  }
 
@@ -66,7 +65,7 @@ class ContinueTest {
   if (this.existingTestTimer.duration) {
    this.existingTestCountDownInterval = setInterval(() => {
     this.existingTestTimer._reducingTimeLeft()
-    this.existingTestTimer._adjustTimerDisplay(this._getTimerElement())
+    this.existingTestTimer._adjustTimerDisplay()
     this._isTestTimeOut()
    }, 1000)
   }
@@ -97,6 +96,14 @@ class ContinueTest {
     template: `<div class="ml-1 tooltip" role="tooltip"><div class="arrow "></div><div class="tooltip-inner bg-white text-primary py-2 px-3 shadow-sm"></div></div>`,
    })
   })
+ }
+
+ _setContinueTestTimer() {
+  this.existingTestTimer = new Timer({
+   duration: this.duration,
+   display: this._getTimerElement(),
+  })
+  this.existingTestTimer._setTimeCountdownText()
  }
 
  _parentAppendChild() {
@@ -174,7 +181,7 @@ class ContinueTest {
                  <div>
                      <small class="text-secondary font-weight-light">เวลาที่เหลือ</small>
                      <h6 id="timer" class="text-primary font-weight-bold">
-                         <bold>${this.existingTestTimer._timeToString()}</bold>
+                         <bold></bold>
                      </h6>
                  </div>
              </div>

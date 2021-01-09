@@ -1,9 +1,11 @@
+import * as DomService from '../js/domService'
+
 export default class Questionselector {
- constructor({ questions, parent, durationInterval }) {
+ constructor({ questions, parent, durationInterval, recentQuestion }) {
   this.questions = questions
   this.parent = parent
   this.durationInterval = durationInterval || undefined
-  this.testingRecentQuestion = parseInt(questions.testinginfo.recentquestion)
+  this.testingRecentQuestion = recentQuestion
 
   this.statusClassLists = [
    'non-selected-question',
@@ -50,7 +52,7 @@ export default class Questionselector {
   this._appendAtagToToggleDownParent()
   this._appendIconToATag()
 
-  this.questions.results.map((question) => {
+  this.questions.map((question) => {
    //    console.log(question)
 
    this.countNumberOfChilds++
@@ -89,7 +91,7 @@ export default class Questionselector {
  _applyRecentQuestionSelector(question) {
   if (question.index == this.testingRecentQuestion) {
    this.selector.classList = `question-selector now-question`
-   this.selector.dataset.status = 'selected-question'
+   this.selector.dataset.status = 'non-selected-question'
   }
  }
 
@@ -127,7 +129,7 @@ export default class Questionselector {
  }
 
  _switchDisableBackButton() {
-  if (_getActiveQuestionSelector().textContent == 1) {
+  if (DomService._getActiveQuestionSelector().textContent == 1) {
    document.querySelector('#backButton').disabled = true
   } else {
    document.querySelector('#backButton').disabled = false
@@ -136,12 +138,12 @@ export default class Questionselector {
 
  _activeQuestionDiv(target) {
   const targetDiv = document.querySelector('div[data-index="' + target + '"]')
-  this._hindQuestion()
-  this._showQuestion(targetDiv)
+  DomService._hindQuestion()
+  DomService._showQuestion(targetDiv)
  }
 
  _removeActiveClass() {
-  const activeSelector = _getActiveQuestionSelector()
+  const activeSelector = DomService._getActiveQuestionSelector()
   activeSelector.classList.remove(...this.statusClassLists)
   activeSelector.className = `question-selector ${activeSelector.dataset.status}`
  }
@@ -158,7 +160,7 @@ export default class Questionselector {
 
  _showQuestion(targetdiv) {
   targetdiv.classList.add('active')
-  //   this._assignQuestionStartedTime()
+  this._assignQuestionStartedTime()
   this._getDurationInterval()
  }
 
@@ -168,112 +170,24 @@ export default class Questionselector {
   recentQuestion.classList.add('none')
  }
 
- _getDurationInterval() {
-  console.log(this.durationInterval)
- }
-
- //  _assignQuestionStartedTime() {
+ //  _clearInterval() {
+ //   //   this.storedTime += this.DurationTimer
+ //   //   console.log(this.storedTime)
+ //   //   console.log(this.DurationTimer)
  //   clearInterval(this.assignQuestionTime)
- //   let DurationTimer = 0
- //   localStorage.setItem('duration', DurationTimer)
- //   this.assignQuestionTime = setInterval(() => {
- //    DurationTimer++
- //    localStorage.setItem('duration', DurationTimer)
- //    console.log(localStorage.getItem('duration'))
- //   }, 1000)
  //  }
 
- _showQuestion(besideQuestion) {
-  // SHOW NEXT QUESTION
-  besideQuestion.classList.add('active')
-  besideQuestion.classList.remove('none')
-  this._assignQuestionStartedTime()
- }
+ //  _assignQuestionStartedTime() {
+ //   this._clearInterval(this.assignQuestionTime)
+ //   this.DurationTimer = 0
+ //   localStorage.setItem('duration', this.DurationTimer)
 
- //  Need to be refactored
+ //   this.assignQuestionTime = setInterval(() => {
+ //    this.DurationTimer++
+ //    localStorage.setItem('duration', this.DurationTimer)
+ //    //    console.log(localStorage.getItem('duration'))
 
- _clearInterval(interval) {
-  clearInterval(interval)
- }
-
- _activeInitiateQuestion(recentquestion) {
-  const recentQuestion = document.querySelector(
-   "[data-index='" + recentquestion + "']"
-  )
-  const recentQuestionParent = recentQuestion.parentElement
-  recentQuestion.classList.remove('none')
-  recentQuestion.classList.add('active')
-  recentQuestionParent.classList.remove('none')
-  this._assignQuestionStartedTime()
- }
-
- _clearInterval() {
-  //   this.storedTime += this.DurationTimer
-  //   console.log(this.storedTime)
-  //   console.log(this.DurationTimer)
-  clearInterval(this.assignQuestionTime)
- }
-
- _assignQuestionStartedTime() {
-  this._clearInterval(this.assignQuestionTime)
-  this.DurationTimer = 0
-  localStorage.setItem('duration', this.DurationTimer)
-
-  this.assignQuestionTime = setInterval(() => {
-   this.DurationTimer++
-   localStorage.setItem('duration', this.DurationTimer)
-//    console.log(localStorage.getItem('duration'))
-
-   //    console.log(this.storedTime)
-  }, 1000)
- }
-}
-
-export const _turnNextQuestionSelectorOn = () => {
- const activequestion = document.querySelector('div.active')
-
- document.querySelector(
-  'div[data-selectorindex="' + activequestion.dataset.index + '"]'
- ).className = `question-selector now-question`
-
- const activeSelector = _getActiveQuestionSelector()
- activeSelector.className = `question-selector ${activeSelector.dataset.status}`
-}
-
-export const _getActiveSelectorStatus = () => {
- return _getActiveQuestionSelector.dataset.status
-}
-
-export const _addOldStatusToClassList = () => {
- _getActiveQuestionSelector().classList.add(_getstatusOfActiveSelector())
-}
-
-export const _replaceActiveSelector = () => {
- const activebutton = document.querySelector('div.now-question')
- activebutton.classList.replace('now-question', activebutton.dataset.status)
-}
-
-export const _getActiveQuestionSelector = () => {
- const activebutton = document.querySelector('div.now-question')
- return activebutton
-}
-
-export const _getBesideActiveQuestionSelector = () => {
- return _getActiveQuestionSelector().nextElementSibling
-}
-
-export const _getstatusOfActiveSelector = () => {
- return _getActiveQuestionSelector().dataset.status
-}
-
-export const _turnPreviousQuestionSelectorOn = () => {
- _replaceActiveSelector()
- _getSelectorByIndex()
-}
-
-export const _getSelectorByIndex = () => {
- const activeQuestion = document.querySelector('div.active')
- document.querySelector(
-  'div[data-selectorindex="' + activeQuestion.dataset.index + '"]'
- ).className = 'question-selector now-question'
+ //    //    console.log(this.storedTime)
+ //   }, 1000)
+ //  }
 }

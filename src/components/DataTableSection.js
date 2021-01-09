@@ -1,4 +1,4 @@
-import DomController, * as DomControlFunction from '../utils/Domcontroller'
+import * as DomControlFunction from '../../utils/DomController'
 import DataTable from './Datatable'
 
 export default class DataTableSection {

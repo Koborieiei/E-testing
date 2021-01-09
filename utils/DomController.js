@@ -1,3 +1,4 @@
+
 export default class DomController {
  constructor() {
   this.body = document.getElementById('app')

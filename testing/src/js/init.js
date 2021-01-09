@@ -3,7 +3,5 @@
 import runTestingPageClass from './runtestingpage.js'
 
 export const init = () => {
- 
-
  new runTestingPageClass()
 }

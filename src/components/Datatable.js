@@ -1,5 +1,5 @@
 import List from 'list.js'
-import Timer from '../../js/class/Timer'
+import Timer from '../../utils/Timer'
 
 export default class DataTableSection {
  constructor({ htmlParent, historyData }) {
@@ -25,7 +25,7 @@ export default class DataTableSection {
    (history) =>
     (history.timeused = new Timer({
      duration: history.timeused,
-    })._timeToStringWithThai())
+    }).getTimeToStringWithThai)
   )
  }
 
@@ -56,7 +56,7 @@ export default class DataTableSection {
    }
   })
  }
- 
+
  _displayNotFoundSearchResult() {
   const table = _getTableElement()
   table.querySelector('.list').appendChild(notFoundSearchResult())

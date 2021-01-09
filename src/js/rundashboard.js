@@ -1,15 +1,14 @@
-import DashboardElementClass from '../../js/class/dashboardelement'
-import Apiservice from '../../js/class/services'
+// import DashboardElementClass from '../../js/class/dashboardelement'
+import Apiservice from '../../utils/services'
 
-import SelectedSkillSection from '../components/SelectedSkillSection'
-import DataTableSection from '../components/DataTableSection'
-import ContinueTestSection from '../components/ContinueTestSection'
+// import SelectedSkillSection from '../components/SelectedSkillSection'
+// import DataTableSection from '../components/DataTableSection'
+// import ContinueTestSection from '../components/ContinueTestSection'
 import SectionContainer from '../components/SectionContainer'
 import PageHeader from '../components/PageHeader'
 
-export default class runDashboardPage extends DashboardElementClass {
+export default class runDashboardPage {
  constructor() {
-  super()
   //   Execution
   this._render()
  }
@@ -32,30 +31,30 @@ export default class runDashboardPage extends DashboardElementClass {
   new SectionContainer(userData)
  }
 
- async setupSelectedSkillsSection() {
-  const userData = await this.userSelectedSkills
+ //  async setupSelectedSkillsSection() {
+ //   const userData = await this.userSelectedSkills
 
-  new SelectedSkillSection({
-   selectedSkillsData: userData.items,
-  }).getSelectedSkillSectionElement()
- }
+ //   new SelectedSkillSection({
+ //    selectedSkillsData: userData.items,
+ //   }).getSelectedSkillSectionElement()
+ //  }
 
- async setupDataTableSection() {
-  const userData = await this.userSelectedSkills
+ //  async setupDataTableSection() {
+ //   const userData = await this.userSelectedSkills
 
-  new DataTableSection({
-   historyData: userData.history,
-  }).dataTableSectionElement()
- }
+ //   new DataTableSection({
+ //    historyData: userData.history,
+ //   }).dataTableSectionElement()
+ //  }
 
- async setupContinueTestSection() {
-  const userData = await this.userSelectedSkills
-  if (userData.existedtest.length !== 0) {
-   new ContinueTestSection({
-    existedTestData: userData.existedtest,
-   })._getContinueTestSectionElement()
-  }
- }
+ //  async setupContinueTestSection() {
+ //   const userData = await this.userSelectedSkills
+ //   if (userData.existedtest.length !== 0) {
+ //    new ContinueTestSection({
+ //     existedTestData: userData.existedtest,
+ //    })._getContinueTestSectionElement()
+ //   }
+ //  }
 
  async _storeUserSelectedSkills() {
   const apiService = new Apiservice()

@@ -1,4 +1,4 @@
-import DomController, * as DomcontrollerFunction from '../utils/Domcontroller'
+import DomController, * as DomcontrollerFunction from '../../utils/DomController'
 
 export default class PageHeader extends DomController {
  constructor({ textheader, secondarytext, img }) {
