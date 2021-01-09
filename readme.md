@@ -1,41 +1,42 @@
 ## Getting start
+
     1. Clone this project
+
 ## Setting up project
+
     1. Go the folder where project is kept
     2. Run `npm init` on your command-line
+
 ## Development
-<<<<<<< HEAD
+
     1. Go the folder forexample testing
     2. Run `webpack -w`
+
 ## Deployment
+
     1. Copy all src files in dist folder
-=======
-    1. Go the folder for example testing
-    2. Run `webpack -w`
+
+======= 1. Go the folder for example testing 2. Run `webpack -w`
+
 ## Deployment
+
     1. Copy all files in dist folder
->>>>>>> 292d47235193afc8f8723804f5e112e970a23488
+
+> > > > > > > 292d47235193afc8f8723804f5e112e970a23488
+
     2. Move to your server ftp
 
 Done :-D
 
 ## Folder structure
-<<<<<<< HEAD
-=======
+
 - Src folder is where components and functions are kept
 - Dist folder where the final code uses to make deployment
-```
->>>>>>> 292d47235193afc8f8723804f5e112e970a23488
+
 ├── css
 │   ├── main.css
 │   └── sb-admin-2.min.css
 ├── dist
-<<<<<<< HEAD
-│   ├── main.css
-│   ├── main.js
-│   ├── vendors.css
-│   ├── vendors.js
-│   └── vendors.js.LICENSE.txt
 ├── inc
 │   ├── footer.php
 │   ├── sidebar.php
@@ -76,8 +77,8 @@ Done :-D
 │   ├── src
 │   │   ├── index.js
 │   │   └── js
-│   │       ├── init.js
-│   │       └── runresultpage.js
+│   │   ├── init.js
+│   │   └── runresultpage.js
 │   └── webpack.config.js
 ├── src
 │   ├── components
@@ -100,7 +101,7 @@ Done :-D
 │   │   ├── init.js
 │   │   └── rundashboard.js
 │   └── utils
-│       └── Domcontroller.js
+│   └── Domcontroller.js
 ├── testing
 │   ├── dist
 │   │   ├── main.css
@@ -117,10 +118,10 @@ Done :-D
 │   │   │   └── questionselector.css
 │   │   ├── index.js
 │   │   └── js
-│   │       ├── class
-│   │       │   └── questionselector.js
-│   │       ├── init.js
-│   │       └── runtestingpage.js
+│   │   ├── class
+│   │   │   └── questionselector.js
+│   │   ├── init.js
+│   │   └── runtestingpage.js
 │   ├── testingObject.php
 │   └── webpack.config.js
 └── webpack.config.js
@@ -148,4 +149,6 @@ Done :-D
 └── webpack.config.js
 
 ```
->>>>>>> 292d47235193afc8f8723804f5e112e970a23488
+
+> > > > > > > 292d47235193afc8f8723804f5e112e970a23488
+```
