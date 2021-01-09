@@ -4,19 +4,33 @@
     1. Go the folder where project is kept
     2. Run `npm init` on your command-line
 ## Development
+<<<<<<< HEAD
     1. Go the folder forexample testing
     2. Run `webpack -w`
 ## Deployment
     1. Copy all src files in dist folder
+=======
+    1. Go the folder for example testing
+    2. Run `webpack -w`
+## Deployment
+    1. Copy all files in dist folder
+>>>>>>> 292d47235193afc8f8723804f5e112e970a23488
     2. Move to your server ftp
 
 Done :-D
 
 ## Folder structure
+<<<<<<< HEAD
+=======
+- Src folder is where components and functions are kept
+- Dist folder where the final code uses to make deployment
+```
+>>>>>>> 292d47235193afc8f8723804f5e112e970a23488
 ├── css
 │   ├── main.css
 │   └── sb-admin-2.min.css
 ├── dist
+<<<<<<< HEAD
 │   ├── main.css
 │   ├── main.js
 │   ├── vendors.css
@@ -110,3 +124,28 @@ Done :-D
 │   ├── testingObject.php
 │   └── webpack.config.js
 └── webpack.config.js
+=======
+├── inc
+├── index.html
+├── js
+│   ├── class
+├── readme.md
+├── showresult
+│   ├── dist
+│   ├── index.html
+│   ├── src
+├── src
+│   ├── components
+│   ├── css
+│   ├── img
+│   ├── index.js
+│   ├── js
+│   └── utils
+├── testing
+│   ├── dist
+│   ├── index.html
+│   ├── src
+└── webpack.config.js
+
+```
+>>>>>>> 292d47235193afc8f8723804f5e112e970a23488
