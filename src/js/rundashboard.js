@@ -10,25 +10,43 @@ import PageHeader from '../components/PageHeader'
 export default class runDashboardPage {
  constructor() {
   //   Execution
+  this.userSelectedSkills = undefined
+  this.apiService = new Apiservice()
+
   this._render()
  }
 
- _render() {
+ async _render() {
   try {
-   this._storeUserSelectedSkills()
+   await this._storeUserSelectedSkills()
+   //    const apiService = new Apiservice()
+   //    this.userSelectedSkills = await apiService._reqToGetUserSelectedSkills()
+
    this._setupPageHeader()
    this.setupSectionContainer()
-   //   this.setupContinueTestSection()
-   //   this.setupSelectedSkillsSection()
-   //   this.setupDataTableSection()
+  } catch (error) {}
+ }
+
+ async _storeUserSelectedSkills() {
+  try {
+   this.userSelectedSkills = await this.apiService._reqToGetUserSelectedSkills()
+   //    this.aaa = await apiService._reqToGetUserSelectedSkills()
+   //    if (this.userSelectedSkills.status == 500) {
+   //     throw ' Have no session'
+   //    }
   } catch (error) {
-   console.log(error)
+   //    window.location = 'NEWedbot.com/backbone/pages/login/'
   }
  }
 
- async setupSectionContainer() {
-  const userData = await this.userSelectedSkills
-  new SectionContainer(userData)
+ setupSectionContainer() {
+  try {
+   const userData = this.userSelectedSkills
+   console.log(this.userSelectedSkills)
+   new SectionContainer(userData)
+  } catch (error) {}
+  //   const apiService = new Apiservice()
+  //   this.userSelectedSkills = await apiService._reqToGetUserSelectedSkills()
  }
 
  //  async setupSelectedSkillsSection() {
@@ -55,12 +73,6 @@ export default class runDashboardPage {
  //    })._getContinueTestSectionElement()
  //   }
  //  }
-
- async _storeUserSelectedSkills() {
-  const apiService = new Apiservice()
-  this.userSelectedSkills = apiService._reqToGetUserSelectedSkills()
-  // console.log(this.userSelectedSkills)
- }
 
  _setupPageHeader() {
   new PageHeader({

@@ -42,9 +42,9 @@ export default class Apiservice {
  async _reqToGetUserSelectedSkills() {
   this._displayLoadingScreen()
   const resp = await fetch(
-   './ajax/getObjectdata.php?',
+   //    './ajax/getObjectdata.php?',
    //   './APIlocaltest/getObjectdata.php?',
-   //    'https://www.edbot.com/backbone/pages/newetesting/APIlocaltest/getObjectdata.php?',
+   'https://www.edbot.com/backbone/pages/newetesting/APIlocaltest/getObjectdata.php?',
 
    {
     method: 'POST',
@@ -57,7 +57,8 @@ export default class Apiservice {
 
   this._unDisplayLoadingScreen()
   const responseData = await resp.json() //await resp.json()
-  return responseData
+
+  return await responseData
  }
 
  async _reqToUpdateUserTime(timeleft, testingid) {
