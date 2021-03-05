@@ -1,6 +1,6 @@
 import DomController, * as DomcontrollerFunction from '../../utils/DomController'
 import SelectedSkillSection from '../components/SelectedSkillSection'
-import DataTableSection from '../components/DataTableSection'
+import DataTableSection from '../components/NotFoundExamSection'
 import ContinueTestSection from '../components/ContinueTestSection'
 
 export default class SectionContainer extends DomController {

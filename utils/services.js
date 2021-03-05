@@ -21,8 +21,8 @@ export default class Apiservice {
   this._displayLoadingScreen()
   const formData = this._appendObjectToFormData(data)
   const resp = await fetch(
-   '../ajax/result.php',
-   //    'https://www.edbot.com/backbone/pages/newetesting/APIlocaltest/resulttest.php?',
+//    '../ajax/result.php',
+      'https://www.edbot.com/backbone/pages/newetesting/APIlocaltest/resulttest.php?',
 
    {
     method: 'POST',
@@ -100,8 +100,8 @@ export default class Apiservice {
 
   const resp = await fetch(
    //Request service 1 = Pre-test 2 = Post-test
-   '../ajax/testingObject.php?',
-   //    'https://www.edbot.com/backbone/pages/newetesting/APIlocaltest/testingObject.php?',
+//    '../ajax/testingObject.php?',
+      'https://www.edbot.com/backbone/pages/newetesting/APIlocaltest/testingObject.php?',
    {
     method: 'POST',
     body: formData,

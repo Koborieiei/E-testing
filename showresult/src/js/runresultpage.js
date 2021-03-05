@@ -1,6 +1,8 @@
-import ShowProgressBar from '../../../js/class/progressbar.class'
-import Timer from '../../../js/class/Timer'
+import ShowProgressBar from '../../../utils/ProgressBar'
+import Timer from '../../../utils/Timer'
 import HtmlElementClass from '../../../js/class/htmlelementclass'
+import TestingPageHeader from '../../../testing/src/components/TestingPageHeader'
+import Button from '../components/Button'
 
 export default class runResultPage extends HtmlElementClass {
  constructor() {
@@ -27,10 +29,7 @@ export default class runResultPage extends HtmlElementClass {
 
    this._setPageBody()
    this._setPageDisplaySkills()
-
    this._setPageButtonContainer()
-
-   console.log(this)
   } catch (error) {
    console.log(error)
    this._appAppendChild(this._generateDisplayErrorHandle())
@@ -60,7 +59,7 @@ export default class runResultPage extends HtmlElementClass {
  }
 
  _getTotalOfQuestionNumber() {
-  return parseInt(localStorage.getItem('totalquestionnumber'))
+  return parseInt(this.testingResult.totalquestion)
  }
 
  _getTimerElement() {
@@ -73,11 +72,11 @@ export default class runResultPage extends HtmlElementClass {
 
  _setTimerText() {
   const timeLeftDuration = new Timer({
-   duration: this._getTimeLeft(),
+   duration: localStorage.getItem('timeleft'),
+   display: this._getTimerElement(),
   })
 
-  timeLeftDuration._getMinutesIncludeZero()
-  this._getTimerElement().textContent = `${timeLeftDuration._getTimeStringWithOutThai()}`
+  timeLeftDuration._adjustTimerDisplay()
  }
 
  _setTotalAnswerText() {
@@ -85,14 +84,14 @@ export default class runResultPage extends HtmlElementClass {
  }
 
  _setPageBody() {
-  const newTimer = new Timer({
-   duration: this._getTimeConsuming(),
-  })
+  //   console.log(this.testingResult.totalquestion)
 
   const resultPageBody = this._generateResultBody()
-  resultPageBody.querySelector(
-   '#timeSpending'
-  ).textContent = `${newTimer._getOnlyMinuteAndSecondString()}`
+  const timeConsuming = new Timer({
+   duration: this._getTimeConsuming(),
+   display: resultPageBody.querySelector('#timeSpending'),
+  })
+  timeConsuming._adjustTimerDisplay()
 
   resultPageBody.querySelector('#displayPoint').textContent =
    `${this._getTestingPoint()} คะแนน` || 'ไม่พบคะแนน'
@@ -101,7 +100,6 @@ export default class runResultPage extends HtmlElementClass {
  }
 
  _getTimeLeft() {
-  console.log(this.testingResult.result.timeleft)
   return this.testingResult.result.timeleft
  }
 
@@ -144,42 +142,43 @@ export default class runResultPage extends HtmlElementClass {
 
  _setPageButtonContainer() {
   const resultButtonContainer = this._generateResultPageButtonContainer()
-  this._setupRetestButton()
-  this._setRedirectToDashboardButton()
+
+  //  this._setupRetestButton()
+  //  this._setRedirectToDashboardButton()
   return this._appAppendChild(resultButtonContainer)
  }
 
  _storeTestingResult() {
   const queryString = window.location.search.split('?')[1]
   this.testingResult = JSON.parse(decodeURIComponent(queryString))
-  console.log(JSON.parse(decodeURIComponent(queryString)))
+  //   console.log(JSON.parse(decodeURIComponent(queryString)))
  }
 
- _setupRetestButton() {
-  this.retestButton.button.addEventListener('click', (e) => {
-   e.preventDefault()
-   const retestingConfirm = new this.confirmModal({
-    headerText: 'ยืนยัน',
-    ModalContent: 'คุณต้องการทดสอบใหม่อีกครั้ง',
-   })
-   retestingConfirm.trueButton.addEventListener('click', () => {
-    history.go(-1)
-   })
-  })
- }
+ //  _setupRetestButton() {
+ //   this.retestButton.button.addEventListener('click', (e) => {
+ //    e.preventDefault()
+ //    const retestingConfirm = new this.confirmModal({
+ //     headerText: 'ยืนยัน',
+ //     ModalContent: 'คุณต้องการทดสอบใหม่อีกครั้ง',
+ //    })
+ //    retestingConfirm.trueButton.addEventListener('click', () => {
+ //     history.go(-1)
+ //    })
+ //   })
+ //  }
 
- _setRedirectToDashboardButton() {
-  this.dashboardButton.button.addEventListener('click', () => {
-   const returnToDashboardConfirm = new this.confirmModal({
-    headerText: 'ยืนยัน',
-    ModalContent: 'คุณต้องการกลับไปหน้าแรกของ E-Testing',
-   })
-   returnToDashboardConfirm.trueButton.addEventListener('click', (e) => {
-    //  Wait to send request to dash board
-    window.location.href = '../'
-   })
-  })
- }
+ //  _setRedirectToDashboardButton() {
+ //   this.dashboardButton.button.addEventListener('click', () => {
+ //    const returnToDashboardConfirm = new this.confirmModal({
+ //     headerText: 'ยืนยัน',
+ //     ModalContent: 'คุณต้องการกลับไปหน้าแรกของ E-Testing',
+ //    })
+ //    returnToDashboardConfirm.trueButton.addEventListener('click', (e) => {
+ //     //  Wait to send request to dash board
+ //     window.location.href = '../'
+ //    })
+ //   })
+ //  }
 
  _getTestingPoint() {
   return this.testingResult.result.point

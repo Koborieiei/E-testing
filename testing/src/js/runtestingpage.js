@@ -64,6 +64,12 @@ export default class runTestingPageClass {
     )
 
     this.testingPageHeader.testingTimeleft._reducingTimeLeft()
+    console.log(this.testingPageHeader.testingTimeleft.duration)
+    localStorage.setItem(
+     'timeleft',
+     this.testingPageHeader.testingTimeleft.duration
+    )
+
     this._checkCountDownTime()
    }, 1000)
   }

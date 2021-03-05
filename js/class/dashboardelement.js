@@ -1,4 +1,3 @@
-import Button from './button'
 import confirmModal from './ConfirmModal'
 // import Skillcard from '../../src/components/Skillcard'
 import alertModal from './alertmodal'
@@ -240,7 +239,9 @@ export default class DashboardElementClass {
   return app.appendChild(htmlNode)
  }
 
+
  _appInnerHtmlReplace(htmlNode) {
   app.innerHtml = htmlNode
  }
 }
+

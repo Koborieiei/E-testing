@@ -1,11 +1,8 @@
-// import DashboardElementClass from '../../js/class/dashboardelement'
 import Apiservice from '../../utils/services'
-
-// import SelectedSkillSection from '../components/SelectedSkillSection'
-// import DataTableSection from '../components/DataTableSection'
-// import ContinueTestSection from '../components/ContinueTestSection'
 import SectionContainer from '../components/SectionContainer'
+import NotFoundExamSection from '../components/NotFoundExamSection'
 import PageHeader from '../components/PageHeader'
+// import { _displayEmptySkillAlert } from '../../utils/DomController'
 
 export default class runDashboardPage {
  constructor() {
@@ -19,23 +16,24 @@ export default class runDashboardPage {
  async _render() {
   try {
    await this._storeUserSelectedSkills()
-   //    const apiService = new Apiservice()
-   //    this.userSelectedSkills = await apiService._reqToGetUserSelectedSkills()
 
    this._setupPageHeader()
-   this.setupSectionContainer()
-  } catch (error) {}
+   if (this.userSelectedSkills.status != 500) {
+    this.setupSectionContainer()
+   } else {
+    this.setupErrorHandleSection()
+   }
+  } catch (error) {
+   console.log(error)
+  }
  }
 
  async _storeUserSelectedSkills() {
   try {
    this.userSelectedSkills = await this.apiService._reqToGetUserSelectedSkills()
    //    this.aaa = await apiService._reqToGetUserSelectedSkills()
-   //    if (this.userSelectedSkills.status == 500) {
-   //     throw ' Have no session'
-   //    }
   } catch (error) {
-   //    window.location = 'NEWedbot.com/backbone/pages/login/'
+   console.log(error)
   }
  }
 
@@ -44,9 +42,13 @@ export default class runDashboardPage {
    const userData = this.userSelectedSkills
    console.log(this.userSelectedSkills)
    new SectionContainer(userData)
-  } catch (error) {}
-  //   const apiService = new Apiservice()
-  //   this.userSelectedSkills = await apiService._reqToGetUserSelectedSkills()
+  } catch (error) {
+   //    _displayEmptySkillAlert()
+  }
+ }
+
+ setupErrorHandleSection() {
+  console.log(new NotFoundExamSection())
  }
 
  //  async setupSelectedSkillsSection() {

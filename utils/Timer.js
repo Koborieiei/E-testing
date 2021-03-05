@@ -18,6 +18,7 @@ export default class Timer {
   this.durationInterval = setInterval(() => {
    this.durationTimer++
    localStorage.setItem('duration', this.durationTimer)
+   //  console.log(localStorage.getItem('duration'))
   }, 1000)
  }
 

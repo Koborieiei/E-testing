@@ -20,7 +20,6 @@ export default class QuestionSection extends DomController {
 
  createQuestionSection() {
   beforeUnloadEvent._addWindowBeforeUnloadEvent()
-
   this._appendToBody(this.questionSectionElement)
   this.generateQuestion()
   this.createQuestionSelector()
@@ -28,7 +27,7 @@ export default class QuestionSection extends DomController {
  }
 
  generateQuestion() {
-  this.submitResultObject.availableQuestion.map((individualQuestion) => {
+  this.submitResultObject.availableQuestion.map((individualQuestion, index) => {
    new TestingItem({
     directionText: individualQuestion.question,
     itemChoices: individualQuestion.answers,
@@ -105,17 +104,22 @@ export default class QuestionSection extends DomController {
  //  action result
  _redirectToResultPage(data) {
   //  unload event listener
+
   beforeUnloadEvent._removeBeforeUnLoadEventListener()
+  console.log(data)
   const newObject = {
    result: data.result,
    skill: data.skill,
    testingid: data.testingid,
+   timeleft: localStorage.getItem('timeleft'),
+   totalquestion: this.submitResultObject.availableQuestion.length,
   }
   // function uri encode
   const jsonEncodeToUri = encodeURIComponent(JSON.stringify(newObject))
-  setTimeout(() => {
-   window.location.assign(`../showresult?${jsonEncodeToUri}`)
-  }, 1000)
+  // setTimeout(() => {
+  //  window.location.assign(`../showresult?${jsonEncodeToUri}`)
+  // }, 1000)
+  console.log(JSON.stringify(newObject))
  }
 
  get backButtonElement() {

@@ -1,6 +1,7 @@
-import Button from './button'
-import confirmModal from './ConfirmModal'
-import alertModal from './alertmodal'
+// import Button from './button'
+import confirmModal from '../../utils/ConfirmModal'
+import Button from '../../showresult/src/components/Button'
+import alertModal from '../../utils/AlertModal'
 
 export default class HtmlElementClass {
  constructor() {
@@ -47,20 +48,23 @@ export default class HtmlElementClass {
   const tag = this._buttonContainer()
   const htmltag = this._parserHtmlTag(tag)
 
-  this.backButton = new Button({
-   textButton: 'ย้อนกลับ',
-   disable: false,
-   body: htmltag.children[0],
-   id: 'backButton',
-  })
+  //   console.log(Button())
+  //   this.backButton = new Button({
+  //    textButton: 'ย้อนกลับ',
+  //    disable: false,
+  //    body: htmltag.children[0],
+  //    id: 'backButton',
+  //   })
 
-  // GEN FOREWARD BUTTON
-  this.nextButton = new Button({
-   textButton: 'ถัดไป',
-   disable: false,
-   body: htmltag.children[1],
-   id: 'nextButton',
-  })
+  //   htmltag.appendChild(this._parserHtmlTag(Button({ name: 'test' })))
+
+  //   // GEN FOREWARD BUTTON
+  //   this.nextButton = new Button({
+  //    textButton: 'ถัดไป',
+  //    disable: false,
+  //    body: htmltag.children[1],
+  //    id: 'nextButton',
+  //   })
   return htmltag
  }
 
@@ -83,25 +87,46 @@ export default class HtmlElementClass {
  _generateResultPageButtonContainer() {
   const tag = this._buttonContainer()
   const htmltag = this._parserHtmlTag(tag)
+  this.dashboardButton = this._parserHtmlTag(
+   Button({ name: 'กลับหน้าแรก', disabled: false })
+  )
+  this.retestButton = this._parserHtmlTag(
+   Button({ name: 'เริ่มทำใหม่', disabled: false })
+  )
 
-  this.retestButton = new Button({
-   textButton: 'เริ่มทำใหม่',
-   disable: false,
-   body: htmltag.children[0],
-   id: 'retestButton',
-  })
+  this._setupDashboardButton()
+  this._setupRetestButton()
 
-  this.retestButton.button.classList.remove('btn-primary')
-  this.retestButton.button.classList.add('btn-outline-primary')
+  htmltag.children[1].appendChild(this.dashboardButton)
+  htmltag.children[0].appendChild(this.retestButton)
 
-  // GEN FOREWARD BUTTON
-  this.dashboardButton = new Button({
-   textButton: 'กลับหน้าแรก',
-   disable: false,
-   body: htmltag.children[1],
-   id: 'dashboardButton',
-  })
   return htmltag
+ }
+
+ _setupRetestButton() {
+  this.retestButton.addEventListener('click', (e) => {
+   e.preventDefault()
+   const retestingConfirm = new this.confirmModal({
+    headerText: 'ยืนยัน',
+    ModalContent: 'คุณต้องการทดสอบใหม่อีกครั้ง',
+   })
+   retestingConfirm.trueButton.addEventListener('click', () => {
+    history.go(-1)
+   })
+  })
+ }
+
+ _setupDashboardButton() {
+  this.dashboardButton.addEventListener('click', () => {
+   const returnToDashboardConfirm = new this.confirmModal({
+    headerText: 'ยืนยัน',
+    ModalContent: 'คุณต้องการกลับไปหน้าแรกของ E-Testing',
+   })
+   returnToDashboardConfirm.trueButton.addEventListener('click', (e) => {
+    //  Wait to send request to dash board
+    window.location.href = '../'
+   })
+  })
  }
 
  // Generate Question Body
@@ -243,8 +268,8 @@ export default class HtmlElementClass {
 
  _buttonContainer() {
   return `<div id="buttonContainer" class="row m-0 mb-5 justify-content-between">
-    <div class="col-5 p-0"></div>
-    <div class="col-5 p-0"></div>
+    <div class="col-5 p-0 d-flex flex-column"></div>
+    <div class="col-5 p-0 d-flex flex-column"></div>
   </div>`
  }
 
