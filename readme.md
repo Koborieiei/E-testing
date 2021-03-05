@@ -14,15 +14,6 @@
 
 ## Deployment
 
-<<<<<<< HEAD
-    1. Copy all src files in dist folder
-    2. Go the folder for example testing
-    3. Run `webpack -w`
-
-## Deployment
-
-=======
->>>>>>> 55da32652af7810ebb9eeb112f71ef5449ae7327
     1. Copy all files in dist folder
     2. Move to your server ftp
 
@@ -37,7 +28,6 @@ Done :-D
 ```
 ├── css
 ├── dist
-<<<<<<< HEAD
 ├── index.html
 ├── js
 ├── package-lock.json
@@ -76,35 +66,4 @@ Done :-D
 │   ├── index.html
 │   ├── src
 └── webpack.config.js
-=======
-├── inc
-├── js
-├── showresult
-│   ├── dist
-│   ├── index.html
-│   ├── package-lock.json
-│   ├── package.json
-│   ├── src
-│   └── webpack.config.js
-├── src
-│   ├── components
-│   ├── css
-│   ├── img
-│   ├── index.js
-│   └── js
-├── testing
-│   ├── dist
-│   ├── index.html
-│   ├── package-lock.json
-│   ├── package.json
-│   ├── src
-│   │   ├── components
-│   │   ├── css
-│   │   ├── index.js
-│   │   └── js
-│   └── webpack.config.js
-├── utils
-└── webpack.config.js
->>>>>>> 55da32652af7810ebb9eeb112f71ef5449ae7327
-
 ```
