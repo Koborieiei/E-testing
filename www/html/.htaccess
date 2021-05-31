@@ -1,0 +1,3 @@
+RewriteEngine On
+
+RewriteRule ^login/([0-9a-zA-Zก-๙_-]+)/$ pages/login/index.php?tl_path=$1

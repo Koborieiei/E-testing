@@ -1,0 +1,41 @@
+.has-error{
+  position: relative;
+}
+
+.has-error label,.smk-error-msg{
+  color: #f00;
+}
+
+.has-error .form-control{
+  border: 1px solid #ff0000;
+  box-shadow: 0 0 0 0.2rem rgba(255, 0, 0, 0.25);
+}
+
+.loading{
+  position: absolute;
+  width: 100%;
+  height: 100vh;
+  top: 0;
+  display: grid;
+  place-content: center;
+}
+
+.bg-loading{
+    width: 100%;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    background-color: rgba(255, 255, 255, 0.38);
+}
+
+.none{
+  display: none;
+}
+
+.smk-alert{
+  height: 52px;
+}
+
+.smk-cancel,.smk-accept{
+  border-radius: 0px;
+}

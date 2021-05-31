@@ -1,0 +1,34 @@
+body{
+	font-size: 16px;
+	color: #000;
+	margin: 0px;
+	padding: 0px;
+	text-decoration: none;
+	overflow-x: hidden;
+	font-family: 'Kanit', sans-serif;
+}
+
+input[type=radio][value="option1"]:checked+label:after {
+    border-color: #2e7d32;
+  background-color: #2e7d32;
+}
+
+input[type=radio][value="5"]:checked+label:after {
+    border-color: #64dd17;
+  background-color: #64dd17;
+}
+
+input[type=radio][value="3"]:checked+label:after {
+    border-color: #ffea00;
+  background-color: #ffea00;
+}
+
+input[type=radio][value="1"]:checked+label:after {
+    border-color: #ff9800;
+  background-color: #ff9800;
+}
+
+input[type=radio][value="0"]:checked+label:after {
+    border-color: #d50000;
+  background-color: #d50000;
+}

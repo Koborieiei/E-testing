@@ -3,67 +3,15 @@
     1. Clone this project
 
 ## Setting up project
+    For easy setup please make sure that you have installed docker
+    
+    Using Docker 
+    1. cd E-testing
+    2. command on your terminal docker-compose up -d
+    3. Open http://localhost:8001/
+    4. Enjoy your testing
 
-    1. Go the folder where project is kept
-    2. Run `npm init` on your command-line
-
-## Development
-
-    1. Go the folder for example cd testing
-    2. Run `webpack -w`
-
-## Deployment
-
-    1. Copy all files in dist folder
-    2. Move to your server ftp
-
-Done :-D
-
-## Folder structure
-
-- Src folder is where components and functions are kept
-- Dist folder where the final code uses to make deployment
-- Utils folder where all reuseable module are kept
-
-```
-├── css
-├── dist
-├── index.html
-├── js
-├── package-lock.json
-├── package.json
-├── readme.md
-├── showresult
-│   ├── dist
-    ├── src
-    │   ├── components
-    │   ├── css
-    │   ├── img
-    │   ├── index.js
-    │   ├── js
-    │   └── utils
-├── testing
-│   ├── dist
-└── webpack.config.js
-├── inc
-├── index.html
-├── js
-│   ├── class
-├── readme.md
-├── showresult
-│   ├── dist
-│   ├── index.html
-│   ├── src
-├── src
-│   ├── components
-│   ├── css
-│   ├── img
-│   ├── index.js
-│   ├── js
-│   └── utils
-├── testing
-│   ├── dist
-│   ├── index.html
-│   ├── src
-└── webpack.config.js
-```
+    Using XAMPP
+    1. Copy folder to your xampp htdocs
+    2. Go phpmyadmin import sql from dump folder
+    3. Open your localhost as a hostname
