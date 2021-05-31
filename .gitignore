@@ -1,8 +1,6 @@
 /.DS_Store
 node_modules
 
-/vendor
-/inc
 
 # local env files
 .env.local
@@ -24,10 +22,5 @@ pnpm-debug.log*
 *.njsproj
 *.sln
 *.sw?
-*.php
 *.json
 *.workspace
-
-git pull origin master --rebase
-
-alert_con.html
